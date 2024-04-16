@@ -1,0 +1,10 @@
+[workspace]
+default-members = ["packages/corgi"]
+members = ["packages/*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Corgi.Media"]
+license = "GPL-3.0"
