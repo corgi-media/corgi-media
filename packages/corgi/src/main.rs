@@ -1,4 +1,8 @@
+mod library;
+
 use clap::{Parser, Subcommand};
+
+use library::{commands::library_commands, Library};
 
 #[derive(Parser)]
 #[command(author = "corgi.media")]
@@ -25,29 +29,6 @@ struct Cli {
 enum Commands {
     /// Library management
     Library(Library),
-}
-
-#[derive(Parser)]
-struct Library {
-    #[command(subcommand)]
-    commands: LibraryCommands,
-}
-
-#[derive(Parser)]
-struct LibraryScanArgs {}
-
-#[derive(Subcommand)]
-enum LibraryCommands {
-    /// Scan libraries
-    Scan(LibraryScanArgs),
-}
-
-fn library_commands(library: &Library) {
-    match &library.commands {
-        LibraryCommands::Scan(_) => {
-            println!("Scanning libraries...");
-        }
-    }
 }
 
 #[tokio::main]
