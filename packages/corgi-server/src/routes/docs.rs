@@ -3,12 +3,21 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::{Config, SwaggerUi};
 
 #[derive(OpenApi)]
-#[openapi(paths(openapi))]
+#[openapi(
+    info(
+        title = "Corgi API"
+    ),
+    paths(openapi),
+    tags(
+        (name = "OpenAPI"),
+    ),
+)]
 struct ApiDoc;
 
 #[utoipa::path(
     get,
     path = "/api-docs/openapi.json",
+    tag = "OpenAPI",
     responses(
         (status = 200, description = "JSON file", body = ())
     )
