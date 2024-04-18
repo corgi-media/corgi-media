@@ -35,11 +35,14 @@ enum Commands {
 async fn start_server(host: String, port: u16) {
     let address = format!("{}:{}", host, port);
     let addr: SocketAddr = address.parse().unwrap();
+
     corgi_server::start(addr).await;
 }
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt().init();
+
     let cli = Cli::parse();
 
     match &cli.commands {

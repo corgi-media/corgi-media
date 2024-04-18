@@ -11,5 +11,6 @@ license.workspace = true
 axum = "0.7.5"
 axum-extra = { version = "0.9.3", features = ["typed-header"] }
 tokio = { version = "1.37.0", features = ["full"] }
+tracing = "0.1.40"
 utoipa = { version = "4.2.0", features = ["axum_extras"] }
 utoipa-swagger-ui = { version = "6.0.0", features = ["axum"] }
