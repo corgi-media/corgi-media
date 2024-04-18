@@ -1,7 +1,8 @@
 mod library;
 
-use clap::{Parser, Subcommand};
+use std::net::SocketAddr;
 
+use clap::{Parser, Subcommand};
 use library::{commands::library_commands, Library};
 
 #[derive(Parser)]
@@ -31,6 +32,12 @@ enum Commands {
     Library(Library),
 }
 
+async fn start_server(host: String, port: u16) {
+    let address = format!("{}:{}", host, port);
+    let addr: SocketAddr = address.parse().unwrap();
+    corgi_server::start(addr).await;
+}
+
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
@@ -38,7 +45,7 @@ async fn main() {
     match &cli.commands {
         Some(Commands::Library(library)) => library_commands(library),
         None => {
-            println!("Hello, world!");
+            start_server(cli.host, cli.port).await;
         }
     }
 }
