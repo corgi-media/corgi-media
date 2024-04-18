@@ -165,6 +165,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "corgi-core"
+version = "0.1.0"
+
+[[package]]
+name = "corgi-database"
+version = "0.1.0"
+
+[[package]]
+name = "corgi-server"
+version = "0.1.0"
+
+[[package]]
 name = "gimli"
 version = "0.28.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
