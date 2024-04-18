@@ -11,7 +11,7 @@ use library::{commands::library_commands, Library};
 #[command(propagate_version = true)]
 struct Cli {
     /// Specify hostname
-    #[arg(long, default_value = "0.0.0.0")]
+    #[arg(long, default_value = "127.0.0.1")]
     host: String,
 
     /// Specify port
