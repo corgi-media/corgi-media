@@ -280,15 +280,18 @@ name = "corgi"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "corgi-core",
  "corgi-server",
  "tokio",
- "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]
 name = "corgi-core"
 version = "0.1.0"
+dependencies = [
+ "tracing",
+ "tracing-subscriber",
+]
 
 [[package]]
 name = "corgi-database"

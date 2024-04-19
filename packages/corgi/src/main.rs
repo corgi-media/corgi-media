@@ -38,9 +38,9 @@ impl Cli {
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt().init();
-
     let cli = Cli::parse();
+
+    corgi_core::init_tracing_subscriber();
 
     match &cli.commands {
         Some(Commands::Library(library)) => library.run().await,
