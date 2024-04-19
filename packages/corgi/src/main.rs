@@ -1,10 +1,15 @@
 mod commands;
 
-use std::net::SocketAddr;
+use std::{
+    net::{IpAddr, Ipv4Addr, SocketAddr},
+    str::FromStr,
+};
 
 use clap::Parser;
 
 use commands::Commands;
+
+const DEFAULT_PORT: u16 = 7029;
 
 #[derive(Parser)]
 #[command(author = "corgi.media")]
@@ -15,9 +20,9 @@ struct Cli {
     #[arg(long, default_value = "127.0.0.1")]
     host: String,
 
-    /// Specify port
-    #[arg(short, long, default_value = "7029")]
-    port: u16,
+    /// Specify port [default: 7029]
+    #[arg(short, long)]
+    port: Option<u16>,
 
     /// Run as a headless service
     #[arg(short, long, default_value = "false")]
@@ -29,8 +34,25 @@ struct Cli {
 
 impl Cli {
     async fn serve(&self) {
-        let address = format!("{}:{}", self.host, self.port);
-        let addr: SocketAddr = address.parse().unwrap();
+        let ip_addr = IpAddr::from_str(&self.host).unwrap_or_else(|_| {
+            tracing::warn!(
+                "Invalid IP address provided: \"{}\". Defaulting to \"{}\"",
+                &self.host,
+                Ipv4Addr::LOCALHOST
+            );
+            IpAddr::V4(Ipv4Addr::LOCALHOST)
+        });
+
+        let mut port = self.port.unwrap_or(DEFAULT_PORT).clamp(1024, 49151);
+        if !matches!(self.port, Some(p) if p == port) {
+            tracing::warn!(
+                "Port must be between 1024 and 49151. Defaulting to \"{}\"",
+                DEFAULT_PORT
+            );
+            port = DEFAULT_PORT;
+        }
+
+        let addr = SocketAddr::new(ip_addr, port);
 
         corgi_server::start(addr).await.unwrap();
     }

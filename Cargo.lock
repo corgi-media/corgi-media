@@ -283,6 +283,7 @@ dependencies = [
  "corgi-core",
  "corgi-server",
  "tokio",
+ "tracing",
 ]
 
 [[package]]
