@@ -32,7 +32,7 @@ impl Cli {
         let address = format!("{}:{}", self.host, self.port);
         let addr: SocketAddr = address.parse().unwrap();
 
-        corgi_server::start(addr).await;
+        corgi_server::start(addr).await.unwrap();
     }
 }
 
