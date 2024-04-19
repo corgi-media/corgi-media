@@ -9,7 +9,7 @@ use clap::Parser;
 
 use commands::Commands;
 
-const DEFAULT_PORT: u16 = 7029;
+static DEFAULT_PORT: u16 = 7029;
 
 #[derive(Parser)]
 #[command(author = "corgi.media")]
@@ -43,14 +43,17 @@ impl Cli {
             IpAddr::V4(Ipv4Addr::LOCALHOST)
         });
 
-        let mut port = self.port.unwrap_or(DEFAULT_PORT);
-        if port < 1024 || port > 49151 {
-            tracing::warn!(
-                "Port must be between 1024 and 49151. Defaulting to \"{}\"",
+        let port = match self.port {
+            Some(x) if (1024..=49151).contains(&x) => x,
+            Some(_) => {
+                tracing::warn!(
+                    "Port must be between 1024 and 49151. Defaulting to \"{}\"",
+                    DEFAULT_PORT
+                );
                 DEFAULT_PORT
-            );
-            port = DEFAULT_PORT;
-        }
+            }
+            None => DEFAULT_PORT,
+        };
 
         let addr = SocketAddr::new(ip_addr, port);
 
