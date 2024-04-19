@@ -1,9 +1,10 @@
-mod library;
+mod commands;
 
 use std::net::SocketAddr;
 
-use clap::{Parser, Subcommand};
-use library::{commands::library_commands, Library};
+use clap::Parser;
+
+use commands::Commands;
 
 #[derive(Parser)]
 #[command(author = "corgi.media")]
@@ -26,17 +27,13 @@ struct Cli {
     commands: Option<Commands>,
 }
 
-#[derive(Subcommand)]
-enum Commands {
-    /// Library management
-    Library(Library),
-}
+impl Cli {
+    async fn serve(&self) {
+        let address = format!("{}:{}", self.host, self.port);
+        let addr: SocketAddr = address.parse().unwrap();
 
-async fn start_server(host: String, port: u16) {
-    let address = format!("{}:{}", host, port);
-    let addr: SocketAddr = address.parse().unwrap();
-
-    corgi_server::start(addr).await;
+        corgi_server::start(addr).await;
+    }
 }
 
 #[tokio::main]
@@ -46,9 +43,7 @@ async fn main() {
     let cli = Cli::parse();
 
     match &cli.commands {
-        Some(Commands::Library(library)) => library_commands(library),
-        None => {
-            start_server(cli.host, cli.port).await;
-        }
+        Some(Commands::Library(library)) => library.run().await,
+        None => cli.serve().await,
     }
 }

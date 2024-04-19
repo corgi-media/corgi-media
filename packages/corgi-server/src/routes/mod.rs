@@ -1,3 +1,3 @@
-pub mod docs;
+mod api_docs;
 
-pub use docs::docs_routers;
+pub use api_docs::ApiDocsRouter;
