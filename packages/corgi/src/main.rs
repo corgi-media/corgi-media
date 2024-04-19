@@ -43,8 +43,8 @@ impl Cli {
             IpAddr::V4(Ipv4Addr::LOCALHOST)
         });
 
-        let mut port = self.port.unwrap_or(DEFAULT_PORT).clamp(1024, 49151);
-        if !matches!(self.port, Some(p) if p == port) {
+        let mut port = self.port.unwrap_or(DEFAULT_PORT);
+        if port < 1024 || port > 49151 {
             tracing::warn!(
                 "Port must be between 1024 and 49151. Defaulting to \"{}\"",
                 DEFAULT_PORT
