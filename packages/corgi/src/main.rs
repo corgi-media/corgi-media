@@ -43,17 +43,16 @@ impl Cli {
             IpAddr::V4(Ipv4Addr::LOCALHOST)
         });
 
-        let port = match self.port {
-            Some(x) if (1024..=49151).contains(&x) => x,
-            Some(_) => {
+        let port = self.port.map_or(DEFAULT_PORT, |x| match x {
+            1024..=49151 => x,
+            _ => {
                 tracing::warn!(
                     "Port must be between 1024 and 49151. Defaulting to \"{}\"",
                     DEFAULT_PORT
                 );
                 DEFAULT_PORT
             }
-            None => DEFAULT_PORT,
-        };
+        });
 
         let addr = SocketAddr::new(ip_addr, port);
 
