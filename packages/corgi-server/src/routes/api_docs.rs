@@ -2,6 +2,8 @@ use axum::{routing::get, Json, Router};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::{Config, SwaggerUi, Url};
 
+use crate::state::AppState;
+
 pub struct ApiDocsRouter;
 
 impl ApiDocsRouter {
@@ -34,7 +36,7 @@ async fn openapi() -> Json<utoipa::openapi::OpenApi> {
 }
 
 impl ApiDocsRouter {
-    pub fn route() -> Router {
+    pub fn route() -> Router<AppState> {
         let config = Config::new([Url::new("Corgi API", ApiDocsRouter::OPENAPI_JSON)]);
         let swagger = SwaggerUi::new(ApiDocsRouter::SWAGGER_UI).config(config);
 

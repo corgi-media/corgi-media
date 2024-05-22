@@ -8,6 +8,8 @@ license.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+corgi-core = { path = "../corgi-core" }
+
 axum = "0.7.5"
 axum-extra = { version = "0.9.3", features = ["typed-header"] }
 tokio = { version = "1.37.0", features = ["full"] }
