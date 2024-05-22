@@ -20,3 +20,7 @@ target/
 
 # VS Code related
 .vscode/
+
+# Application related
+/data/
+/config/
