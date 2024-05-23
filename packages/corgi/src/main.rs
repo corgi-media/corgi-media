@@ -8,7 +8,7 @@ use std::{
 
 use clap::Parser;
 
-use corgi_core::config::AppConfig;
+use corgi_core::{config::AppConfig, tracing};
 use corgi_server::CorgiServer;
 
 use commands::Commands;
@@ -92,19 +92,8 @@ impl Cli {
 }
 
 impl Cli {
-    async fn serve(&self) {
+    async fn serve(&self, config: AppConfig) {
         let addr = SocketAddr::new(self.ip_addr(), self.port());
-
-        let config_path = self.config_path();
-        let data_path = self.data_path();
-
-        tracing::info!("Path to use for configuration: {}", config_path);
-        tracing::info!(
-            "Path to use for the data folder (database, caches, etc.): {}",
-            data_path
-        );
-
-        let config = AppConfig::new(&config_path, &data_path);
 
         let server = CorgiServer::new(addr, config).await.unwrap();
 
@@ -115,10 +104,23 @@ impl Cli {
 async fn main() {
     let cli = Cli::parse();
 
-    corgi_core::init_tracing_subscriber();
+    let config = tracing::with_default(|| {
+        let config_path = cli.config_path();
+        let data_path = cli.data_path();
+
+        tracing::info!("Path to use for configuration: {}", config_path);
+        tracing::info!(
+            "Path to use for the data folder (database, caches, etc.): {}",
+            data_path
+        );
+
+        AppConfig::new(&config_path, &data_path)
+    });
+
+    tracing::init();
 
     match &cli.commands {
         Some(Commands::Library(library)) => library.run().await,
-        None => cli.serve().await,
+        None => cli.serve(config).await,
     }
 }

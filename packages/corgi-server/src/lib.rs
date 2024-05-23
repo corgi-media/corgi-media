@@ -6,7 +6,7 @@ use std::net::SocketAddr;
 use axum::Router;
 use tower_http::trace::TraceLayer;
 
-use corgi_core::config::AppConfig;
+use corgi_core::{config::AppConfig, tracing};
 
 use state::AppState;
 
