@@ -1,1 +1,1 @@
-pub const CONFIG_DATABASE: &str = "database.toml";
+pub const FILE_CONFIG_DATABASE: &str = "database.toml";

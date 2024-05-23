@@ -1,6 +1,6 @@
 use std::{fs::create_dir_all, path::PathBuf};
 
-use crate::constant::CONFIG_DATABASE;
+use crate::constant::FILE_CONFIG_DATABASE;
 
 pub struct ServerConfig {
     pub config_path: String,
@@ -27,12 +27,12 @@ impl ServerConfig {
         PathBuf::from(&self.config_path)
     }
 
-    pub fn database_config_path_buf(&self) -> PathBuf {
-        self.config_path_buf().join(CONFIG_DATABASE)
+    pub fn config_database_path_buf(&self) -> PathBuf {
+        self.config_path_buf().join(FILE_CONFIG_DATABASE)
     }
 
-    pub fn database_config_path(&self) -> String {
-        self.database_config_path_buf()
+    pub fn config_database_path(&self) -> String {
+        self.config_database_path_buf()
             .to_string_lossy()
             .into_owned()
     }
