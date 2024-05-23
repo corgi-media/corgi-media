@@ -1,5 +1,5 @@
 pub mod database;
-mod server;
+pub mod server;
 
 pub use database::DatabaseConfig;
 pub use server::ServerConfig;
