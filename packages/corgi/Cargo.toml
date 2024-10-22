@@ -11,5 +11,5 @@ license.workspace = true
 corgi-core = { path = "../corgi-core" }
 corgi-server = { path = "../corgi-server" }
 
-clap = { version = "4.5.4", features = ["derive"] }
-tokio = { version = "1.37.0", features = ["full"] }
+clap = { version = "4.5.20", features = ["derive"] }
+tokio = { version = "1.41.0", features = ["full"] }

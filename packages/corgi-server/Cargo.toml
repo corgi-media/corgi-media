@@ -11,8 +11,8 @@ license.workspace = true
 corgi-core = { path = "../corgi-core" }
 
 axum = "0.7.5"
-axum-extra = { version = "0.9.3", features = ["typed-header"] }
-tokio = { version = "1.37.0", features = ["full"] }
-tower-http = { version = "0.5.2", features = ["trace"] }
-utoipa = { version = "4.2.0", features = ["axum_extras"] }
-utoipa-swagger-ui = { version = "7.0.3", features = ["axum"] }
+axum-extra = { version = "0.9.4", features = ["typed-header"] }
+tokio = { version = "1.41.0", features = ["full"] }
+tower-http = { version = "0.6.1", features = ["trace"] }
+utoipa = { version = "5.1.1", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "8.0.2", features = ["axum"] }

@@ -12,5 +12,5 @@ corgi-database = { path = "../corgi-database" }
 
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing = "0.1.40"
-serde = { version = "1.0.202", features = ["derive"] }
-toml = "0.8.13"
+serde = { version = "1.0.211", features = ["derive"] }
+toml = "0.8.19"
