@@ -513,6 +513,7 @@ dependencies = [
 name = "corgi-core"
 version = "0.1.0"
 dependencies = [
+ "corgi-database",
  "serde",
  "toml",
  "tracing",
