@@ -8,6 +8,8 @@ license.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+corgi-database = { path = "../corgi-database" }
+
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing = "0.1.40"
 serde = { version = "1.0.202", features = ["derive"] }

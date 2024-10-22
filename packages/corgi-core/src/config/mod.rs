@@ -13,7 +13,7 @@ impl AppConfig {
     pub fn new(config_path: &str, data_path: &str) -> Self {
         let server = ServerConfig::new(config_path, data_path);
 
-        let database = DatabaseConfig::read(&server.config_database_path());
+        let database = DatabaseConfig::read(&server.config_database_path(), &server.data_path);
 
         Self { server, database }
     }

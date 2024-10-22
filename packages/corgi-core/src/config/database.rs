@@ -1,6 +1,8 @@
-use std::fs;
+use std::{fs, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
+
+use crate::constant::FILE_DATA_SQLITE;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum DatabaseDriver {
@@ -45,28 +47,35 @@ pub struct PostgresConfig {
     pub database: String,
 }
 
-impl DatabaseConfig {
-    pub fn read(path: &str) -> Option<DatabaseConfig> {
-        tracing::info!("Reading database configuration from: {}", path);
+impl Default for SqliteConfig {
+    fn default() -> Self {
+        Self {
+            path: FILE_DATA_SQLITE.to_owned(),
+        }
+    }
+}
 
-        let file = fs::read_to_string(path)
+impl DatabaseConfig {
+    pub fn read(config_file: &str, data_path: &str) -> Option<Self> {
+        tracing::info!("Reading database configuration from: {}", config_file);
+
+        let file = fs::read_to_string(config_file)
             .map_err(|err| {
                 tracing::warn!("Failed to read database configuration file: {}", err);
             })
             .ok()?;
         tracing::debug!("Database configuration file contents: \n{}", file);
 
-        let config: DatabaseConfig = toml::from_str(&file)
+        let mut config: DatabaseConfig = toml::from_str(&file)
             .map_err(|err| {
                 tracing::warn!("Failed to parse database configuration file: {}", err);
             })
             .ok()?;
-        tracing::debug!("Database configuration: {:#?}", config);
 
         if match config.driver {
             DatabaseDriver::MySql => config.mysql.is_none(),
             DatabaseDriver::Postgres => config.postgres.is_none(),
-            DatabaseDriver::Sqlite => config.sqlite.is_none(),
+            _ => false,
         } {
             tracing::warn!(
                 "{:?} configuration is missing in database configuration",
@@ -75,6 +84,48 @@ impl DatabaseConfig {
             return None;
         }
 
+        if let DatabaseDriver::Sqlite = config.driver {
+            let mut sqlite = config.sqlite.unwrap_or_default();
+            let mut sqlite_path = PathBuf::from(sqlite.path);
+
+            if sqlite_path.is_relative() {
+                sqlite_path = PathBuf::from(data_path).join(sqlite_path);
+            }
+            sqlite.path = sqlite_path.to_string_lossy().into_owned();
+
+            config.sqlite = Some(sqlite);
+        }
+
+        tracing::debug!("Database configuration: {:#?}", config);
+
         Some(config)
+    }
+
+    pub fn connection_url(&self) -> String {
+        match self.driver {
+            DatabaseDriver::MySql => {
+                let mysql = self.mysql.as_ref().unwrap();
+                format!(
+                    "mysql://{}:{}@{}:{}/{}",
+                    mysql.user, mysql.password, mysql.host, mysql.port, mysql.database
+                )
+            }
+            DatabaseDriver::Postgres => {
+                let postgres = self.postgres.as_ref().unwrap();
+                format!(
+                    "postgres://{}:{}@{}:{}/{}",
+                    postgres.user,
+                    postgres.password,
+                    postgres.host,
+                    postgres.port,
+                    postgres.database
+                )
+            }
+            DatabaseDriver::Sqlite => {
+                let sqlite = self.sqlite.as_ref().unwrap();
+
+                format!("sqlite://{}?mode=rwc", sqlite.path)
+            }
+        }
     }
 }
