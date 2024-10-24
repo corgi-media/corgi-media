@@ -1,10 +1,8 @@
-mod routes;
+mod api_docs;
+mod routers;
 mod state;
 
 use std::net::SocketAddr;
-
-use axum::Router;
-use tower_http::trace::TraceLayer;
 
 use corgi_core::{config::AppConfig, tracing};
 
@@ -28,13 +26,10 @@ impl CorgiServer {
     }
 
     pub async fn serve(self) -> Result<(), Box<dyn std::error::Error>> {
-        let app = Router::new()
-            .merge(routes::ApiDocsRouter::route())
-            .with_state(self.state)
-            .layer(TraceLayer::new_for_http());
+        let router = routers::AppRouter::route().with_state(self.state);
 
         tracing::info!("Corgi server running on http://{}", self.tcp.local_addr()?);
-        axum::serve(self.tcp, app.into_make_service()).await?;
+        axum::serve(self.tcp, router.into_make_service()).await?;
 
         Ok(())
     }

@@ -538,6 +538,7 @@ dependencies = [
  "toml",
  "tracing",
  "tracing-subscriber",
+ "utoipa",
 ]
 
 [[package]]
@@ -554,9 +555,11 @@ dependencies = [
  "axum",
  "axum-extra",
  "corgi-core",
+ "serde",
  "tokio",
  "tower-http",
  "utoipa",
+ "utoipa-axum",
  "utoipa-swagger-ui",
 ]
 
@@ -2838,9 +2841,9 @@ checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
 
 [[package]]
 name = "utoipa"
-version = "5.1.1"
+version = "5.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8861811f7213bb866cd02319acb69a15b0ef8ca46874e805bd92d488c779036a"
+checksum = "5e12e84f0ff45b6818029cd0f67280e453c80132c1b9897df407ecc20b9f7cfd"
 dependencies = [
  "indexmap",
  "serde",
@@ -2849,10 +2852,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "utoipa-gen"
-version = "5.1.1"
+name = "utoipa-axum"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fadf94f07d67df4b15e6490dd9a9d59d7374849413e7f137eafe52fdcbd0db5"
+checksum = "437ecfd6bbcdadb45dab6a63462ec9034fd9d3a926f471298f03aea749028419"
+dependencies = [
+ "axum",
+ "paste",
+ "tower-layer",
+ "tower-service",
+ "utoipa",
+]
+
+[[package]]
+name = "utoipa-gen"
+version = "5.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0dfc694d3a3118d2b9e80d68be83bf1aab7988510916934db83da61c14e7e6b2"
 dependencies = [
  "proc-macro2",
  "quote",
