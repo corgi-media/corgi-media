@@ -1,10 +1,11 @@
 use std::{fs::create_dir_all, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 use crate::constant::FILE_CONFIG_DATABASE;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
 pub struct ServerConfig {
     pub config_path: String,
     pub data_path: String,

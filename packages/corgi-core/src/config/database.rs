@@ -1,10 +1,11 @@
 use std::{fs, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 use crate::constant::FILE_DATA_SQLITE;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
 pub enum DatabaseDriver {
     #[serde(alias = "mysql")]
     MySql,
@@ -16,7 +17,7 @@ pub enum DatabaseDriver {
     Sqlite,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
 pub struct DatabaseConfig {
     pub driver: DatabaseDriver,
     pub sqlite: Option<SqliteConfig>,
@@ -24,12 +25,12 @@ pub struct DatabaseConfig {
     pub postgres: Option<PostgresConfig>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
 pub struct SqliteConfig {
     pub path: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
 pub struct MySqlConfig {
     pub host: String,
     pub port: u16,
@@ -38,7 +39,7 @@ pub struct MySqlConfig {
     pub database: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
 pub struct PostgresConfig {
     pub host: String,
     pub port: u16,

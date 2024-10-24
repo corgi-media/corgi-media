@@ -2,16 +2,17 @@ pub mod database;
 pub mod server;
 
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 pub use database::DatabaseConfig;
 pub use server::ServerConfig;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
 pub struct AppConfigStatus {
     pub database: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
 pub struct AppConfig {
     pub server: ServerConfig,
     pub database: Option<DatabaseConfig>,
