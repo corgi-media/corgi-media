@@ -1,4 +1,7 @@
-use std::{fs, path::PathBuf};
+use std::{
+    fs::{self, create_dir_all},
+    path::PathBuf,
+};
 
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -92,6 +95,15 @@ impl DatabaseConfig {
             if sqlite_path.is_relative() {
                 sqlite_path = PathBuf::from(data_path).join(sqlite_path);
             }
+
+            if let Some(sqlite_dir) = sqlite_path.parent() {
+                create_dir_all(sqlite_dir)
+                    .map_err(|err| {
+                        tracing::error!("Failed to create SQLite directory: {}", err);
+                    })
+                    .ok()?;
+            }
+
             sqlite.path = sqlite_path.to_string_lossy().into_owned();
 
             config.sqlite = Some(sqlite);
