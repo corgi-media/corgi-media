@@ -8,7 +8,7 @@ use crate::{api_docs::ApiTags, state::AppState};
 pub struct Routers;
 
 impl Routers {
-    pub const STATUS: &'static str = "/system/configurations/status";
+    pub const STATUS: &'static str = "/configurations/status";
 }
 
 #[utoipa::path(

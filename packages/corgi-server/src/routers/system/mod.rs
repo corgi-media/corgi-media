@@ -6,10 +6,12 @@ use crate::state::AppState;
 
 pub struct Routers;
 
-impl Routers {}
+impl Routers {
+    pub const PATH: &'static str = "/system";
+}
 
 impl Routers {
     pub fn route() -> OpenApiRouter<AppState> {
-        OpenApiRouter::new().merge(configurations::Routers::route())
+        OpenApiRouter::new().nest(Routers::PATH, configurations::Routers::route())
     }
 }
