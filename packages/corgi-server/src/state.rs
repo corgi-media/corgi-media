@@ -10,6 +10,7 @@ pub struct AppState {
 
 impl AppState {
     pub async fn new(config: AppConfig) -> Result<Self, Box<dyn std::error::Error>> {
+        let config = Arc::new(config);
         let mut database: Option<Arc<DatabaseClient>> = None;
 
         if let Some(database_config) = &config.database {
@@ -21,8 +22,6 @@ impl AppState {
                 }
             }
         }
-
-        let config: Arc<AppConfig> = Arc::new(config);
 
         Ok(Self { config, database })
     }
