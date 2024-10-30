@@ -5,24 +5,34 @@ use corgi_core::{config::AppConfig, tracing, DatabaseClient};
 #[derive(Clone)]
 pub struct AppState {
     pub config: Arc<AppConfig>,
-    pub database: Option<Arc<DatabaseClient>>,
+    pub database: Arc<Option<DatabaseClient>>,
 }
 
 impl AppState {
     pub async fn new(config: AppConfig) -> Result<Self, Box<dyn std::error::Error>> {
         let config = Arc::new(config);
-        let mut database: Option<Arc<DatabaseClient>> = None;
+        let mut state = Self {
+            config,
+            database: Arc::new(None),
+        };
 
-        if let Some(database_config) = &config.database {
-            database = match DatabaseClient::connect(&database_config.connection_url()).await {
-                Ok(database) => Some(Arc::new(database)),
+        state.connect_database().await;
+
+        Ok(state)
+    }
+
+    pub async fn connect_database(&mut self) -> bool {
+        if let Some(database_config) = &self.config.database {
+            let database = match DatabaseClient::connect(&database_config.connection_url()).await {
+                Ok(database) => Some(database),
                 Err(err) => {
                     tracing::error!("Failed to connect to database: {:?}", err);
                     None
                 }
-            }
+            };
+            self.database = Arc::new(database);
         }
 
-        Ok(Self { config, database })
+        self.database.is_some()
     }
 }
