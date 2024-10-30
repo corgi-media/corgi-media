@@ -8,7 +8,8 @@ use crate::{api_docs::ApiTags, state::AppState};
 pub struct Routers;
 
 impl Routers {
-    pub const STATUS: &'static str = "/configurations/status";
+    pub const PATH: &'static str = "/configurations";
+    pub const STATUS: &'static str = "/status";
 }
 
 #[utoipa::path(
@@ -25,6 +26,9 @@ async fn config_status(State(state): State<AppState>) -> Json<AppConfigStatus> {
 
 impl Routers {
     pub fn route() -> OpenApiRouter<AppState> {
-        OpenApiRouter::new().routes(routes!(config_status))
+        OpenApiRouter::new().nest(
+            Routers::PATH,
+            OpenApiRouter::new().routes(routes![config_status]),
+        )
     }
 }
