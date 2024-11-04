@@ -24,13 +24,19 @@ impl AppState {
     pub async fn connect_database(&mut self) -> bool {
         if let Some(database_config) = &self.config.database {
             let database = match DatabaseClient::connect(&database_config.connection_url()).await {
-                Ok(database) => Some(database),
+                Ok(db) => db,
                 Err(err) => {
                     tracing::error!("Failed to connect to database: {:?}", err);
-                    None
+                    return false;
                 }
             };
-            self.database = Arc::new(database);
+
+            if let Err(err) = database.migration_up().await {
+                tracing::error!("Database migration failed: {:?}", err);
+                return false;
+            }
+
+            self.database = Arc::new(Some(database));
         }
 
         self.database.is_some()
