@@ -63,7 +63,7 @@ impl Cli {
         let host = self
             .host
             .clone()
-            .or(env::var("HOST").ok())
+            .or(env::var("CORGI_HOST").ok())
             .unwrap_or(IpAddr::V4(Ipv4Addr::LOCALHOST).to_string());
 
         IpAddr::from_str(&host).unwrap_or_else(|_| {
@@ -79,7 +79,9 @@ impl Cli {
     fn port(&self) -> u16 {
         let port = self
             .port
-            .or(env::var("PORT").ok().and_then(|port| port.parse().ok()))
+            .or(env::var("CORGI_PORT")
+                .ok()
+                .and_then(|port| port.parse().ok()))
             .unwrap_or(DEFAULT_PORT);
 
         match port {
@@ -114,7 +116,7 @@ impl Cli {
         let path = self
             .config
             .clone()
-            .or(env::var("CONFIG_PATH").ok())
+            .or(env::var("CORGI_CONFIG_PATH").ok())
             .unwrap_or(DEFAULT_CONFIG_PATH.to_string());
 
         self.resolve_path(&path)
@@ -124,7 +126,7 @@ impl Cli {
         let path = self
             .data
             .clone()
-            .or(env::var("DATA_PATH").ok())
+            .or(env::var("CORGI_DATA_PATH").ok())
             .unwrap_or(DEFAULT_DATA_PATH.to_string());
 
         self.resolve_path(&path)
@@ -134,7 +136,7 @@ impl Cli {
         let url = self
             .database
             .clone()
-            .or(env::var("DATABASE_URL").ok())
+            .or(env::var("CORGI_DATABASE_URL").ok())
             .unwrap_or_else(|| {
                 let default = self.default_database_url();
                 tracing::warn!("No database URL provided. Defaulting to {}", default);

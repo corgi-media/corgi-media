@@ -8,6 +8,7 @@ pub fn init() {
         .with(
             EnvFilter::builder()
                 .with_default_directive(Level::TRACE.into())
+                .with_env_var("CORGI_LOG_LEVEL")
                 .from_env_lossy(),
         )
         .init();
