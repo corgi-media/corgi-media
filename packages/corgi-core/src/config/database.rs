@@ -90,18 +90,17 @@ impl DatabaseConfig {
 
         if let DatabaseDriver::Sqlite = config.driver {
             let mut sqlite = config.sqlite.unwrap_or_default();
-            let mut sqlite_path = PathBuf::from(sqlite.path);
+            let mut sqlite_path = PathBuf::from(&sqlite.path);
 
             if sqlite_path.is_relative() {
                 sqlite_path = PathBuf::from(data_path).join(sqlite_path);
             }
 
             if let Some(sqlite_dir) = sqlite_path.parent() {
-                create_dir_all(sqlite_dir)
-                    .map_err(|err| {
-                        tracing::error!("Failed to create SQLite directory: {}", err);
-                    })
-                    .ok()?;
+                if let Err(err) = create_dir_all(sqlite_dir) {
+                    tracing::error!("Failed to create SQLite directory: {}", err);
+                    return None;
+                }
             }
 
             sqlite.path = sqlite_path.to_string_lossy().into_owned();
