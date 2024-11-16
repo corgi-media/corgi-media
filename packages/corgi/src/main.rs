@@ -166,27 +166,26 @@ impl Cli {
 
         server.serve().await.unwrap();
     }
+    fn make_config(&self) -> AppConfig {
+        let server_config = ServerConfig {
+            host: self.ip_addr().to_string(),
+            port: self.port(),
+            config_path: self.config_path(),
+            data_path: self.data_path(),
+            database_url: self.database_url(),
+        };
+
+        AppConfig::init(server_config)
+    }
 }
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
+
     dotenv().ok();
-
-    let config = tracing::with_default(|| {
-        let server_config = ServerConfig {
-            host: cli.ip_addr().to_string(),
-            port: cli.port(),
-            config_path: cli.config_path(),
-            data_path: cli.data_path(),
-            database_url: cli.database_url(),
-        };
-
-        tracing::info!("Server configuration: {:#?}", server_config);
-
-        AppConfig::init(server_config)
-    });
-
     tracing::init();
+
+    let config = cli.make_config();
 
     match &cli.commands {
         Some(Commands::Library(library)) => library.run().await,
