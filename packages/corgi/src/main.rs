@@ -1,40 +1,54 @@
 mod commands;
 
 use std::{
+    env,
+    fs::create_dir_all,
     net::{IpAddr, Ipv4Addr, SocketAddr},
     path::PathBuf,
     str::FromStr,
 };
 
 use clap::Parser;
+use dotenvy::dotenv;
 
-use corgi_core::{config::AppConfig, tracing};
+use corgi_core::{
+    config::{AppConfig, ServerConfig},
+    tracing,
+};
 use corgi_server::CorgiServer;
 
 use commands::Commands;
 
 const DEFAULT_PORT: u16 = 7029;
+const DEFAULT_CONFIG_PATH: &str = "./config";
+const DEFAULT_DATA_PATH: &str = "./data";
 
 #[derive(Parser)]
 #[command(author = "corgi.media")]
 #[command(version)]
 #[command(propagate_version = true)]
 struct Cli {
-    /// Specify hostname
-    #[arg(long, default_value = "127.0.0.1")]
-    host: String,
+    /// Specify hostname [default: 127.0.0.1]
+    #[arg(long)]
+    host: Option<String>,
 
     /// Specify port [default: 7029]
     #[arg(short, long)]
     port: Option<u16>,
 
-    /// Path to use for configuration
-    #[arg(short, long, default_value = "./config")]
-    config: String,
+    /// Path to use for configurations [default: ./config]
+    #[arg(short, long)]
+    config: Option<String>,
 
     /// Path to use for the data folder (database, caches, etc.)
-    #[arg(short, long, default_value = "./data")]
-    data: String,
+    /// [default: ./data]
+    #[arg(short, long)]
+    data: Option<String>,
+
+    /// Database connection URL (protocol://username:password@host/database)
+    /// [default: sqlite://{DATA}/database/corgi.db?mode=rwc]
+    #[arg(long)]
+    database: Option<String>,
 
     /// Run as a headless service
     #[arg(short, long, default_value = "false")]
@@ -46,10 +60,16 @@ struct Cli {
 
 impl Cli {
     fn ip_addr(&self) -> IpAddr {
-        IpAddr::from_str(&self.host).unwrap_or_else(|_| {
+        let host = self
+            .host
+            .clone()
+            .or(env::var("HOST").ok())
+            .unwrap_or(IpAddr::V4(Ipv4Addr::LOCALHOST).to_string());
+
+        IpAddr::from_str(&host).unwrap_or_else(|_| {
             tracing::warn!(
                 "Invalid IP address provided: \"{}\". Defaulting to \"{}\"",
-                &self.host,
+                &host,
                 Ipv4Addr::LOCALHOST
             );
             IpAddr::V4(Ipv4Addr::LOCALHOST)
@@ -57,8 +77,13 @@ impl Cli {
     }
 
     fn port(&self) -> u16 {
-        self.port.map_or(DEFAULT_PORT, |x| match x {
-            1024..=49151 => x,
+        let port = self
+            .port
+            .or(env::var("PORT").ok().and_then(|port| port.parse().ok()))
+            .unwrap_or(DEFAULT_PORT);
+
+        match port {
+            1024..=49151 => port,
             _ => {
                 tracing::warn!(
                     "Port must be between 1024 and 49151. Defaulting to \"{}\"",
@@ -66,10 +91,10 @@ impl Cli {
                 );
                 DEFAULT_PORT
             }
-        })
+        }
     }
 
-    fn resolve_service_path(&self, path: &str) -> String {
+    fn resolve_path(&self, path: &str) -> String {
         let mut path = PathBuf::from(path);
         if self.service {
             let current_exe = std::env::current_exe().unwrap();
@@ -79,15 +104,57 @@ impl Cli {
                 path = current_dir.join(&path);
             }
         }
+
+        create_dir_all(&path).unwrap();
+
         path.to_string_lossy().into_owned()
     }
 
     fn config_path(&self) -> String {
-        self.resolve_service_path(&self.config)
+        let path = self
+            .config
+            .clone()
+            .or(env::var("CONFIG_PATH").ok())
+            .unwrap_or(DEFAULT_CONFIG_PATH.to_string());
+
+        self.resolve_path(&path)
     }
 
     fn data_path(&self) -> String {
-        self.resolve_service_path(&self.data)
+        let path = self
+            .data
+            .clone()
+            .or(env::var("DATA_PATH").ok())
+            .unwrap_or(DEFAULT_DATA_PATH.to_string());
+
+        self.resolve_path(&path)
+    }
+
+    fn database_url(&self) -> String {
+        let url = self
+            .database
+            .clone()
+            .or(env::var("DATABASE_URL").ok())
+            .unwrap_or_else(|| {
+                let default = self.default_database_url();
+                tracing::warn!("No database URL provided. Defaulting to {}", default);
+                default
+            });
+
+        if url.starts_with("sqlite") {
+            let path = url.split("://").nth(1).unwrap();
+            let path = PathBuf::from(path);
+
+            create_dir_all(path.parent().unwrap()).unwrap();
+        }
+
+        url
+    }
+
+    fn default_database_url(&self) -> String {
+        let path = PathBuf::from(self.data_path()).join("database/corgi.db");
+
+        format!("sqlite://{}?mode=rwc", path.to_string_lossy())
     }
 }
 
@@ -103,18 +170,20 @@ impl Cli {
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
+    dotenv().ok();
 
     let config = tracing::with_default(|| {
-        let config_path = cli.config_path();
-        let data_path = cli.data_path();
+        let server_config = ServerConfig {
+            host: cli.ip_addr().to_string(),
+            port: cli.port(),
+            config_path: cli.config_path(),
+            data_path: cli.data_path(),
+            database_url: cli.database_url(),
+        };
 
-        tracing::info!("Path to use for configuration: {}", config_path);
-        tracing::info!(
-            "Path to use for the data folder (database, caches, etc.): {}",
-            data_path
-        );
+        tracing::info!("Server configuration: {:#?}", server_config);
 
-        AppConfig::new(&config_path, &data_path)
+        AppConfig::init(server_config)
     });
 
     tracing::init();

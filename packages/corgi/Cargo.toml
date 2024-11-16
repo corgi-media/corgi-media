@@ -13,3 +13,4 @@ corgi-server = { path = "../corgi-server" }
 
 clap = { version = "4.5.20", features = ["derive"] }
 tokio = { version = "1.41.0", features = ["full"] }
+dotenvy = "0.15.7"

@@ -22,5 +22,6 @@ target/
 .vscode/
 
 # Application related
+.env
 /data/
 /config/

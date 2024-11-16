@@ -20,7 +20,7 @@ impl CorgiServer {
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let tcp = tokio::net::TcpListener::bind(addr).await?;
 
-        let state = AppState::new(config).await?;
+        let state = AppState::init(config).await?;
 
         Ok(Self { state, tcp })
     }

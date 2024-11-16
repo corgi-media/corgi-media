@@ -41,10 +41,7 @@ async fn system_ping() -> &'static str {
     )
 )]
 async fn system_status(State(state): State<AppState>) -> Json<SystemStatus> {
-    let database = match state.database.as_ref() {
-        Some(db) => db.connection.ping().await.is_ok(),
-        _ => false,
-    };
+    let database = state.database.as_ref().connection.ping().await.is_ok();
 
     Json(SystemStatus { database })
 }

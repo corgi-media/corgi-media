@@ -526,6 +526,7 @@ dependencies = [
  "clap",
  "corgi-core",
  "corgi-server",
+ "dotenvy",
  "tokio",
 ]
 

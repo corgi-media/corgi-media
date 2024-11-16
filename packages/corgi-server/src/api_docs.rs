@@ -8,5 +8,5 @@ pub struct ApiTags;
 
 impl ApiTags {
     pub const SYSTEM: &'static str = "System";
-    pub const CONFIGURATIONS: &'static str = "Configurations";
+    // pub const CONFIGURATIONS: &'static str = "Configurations";
 }
