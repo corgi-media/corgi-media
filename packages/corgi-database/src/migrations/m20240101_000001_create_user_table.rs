@@ -1,7 +1,5 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
-use super::general::general_table_cols;
-
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 
@@ -9,7 +7,7 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .create_table(general_table_cols(
+            .create_table(timestamps(
                 Table::create()
                     .table(User::Table)
                     .if_not_exists()
@@ -19,11 +17,11 @@ impl MigrationTrait for Migration {
                     .col(string_len(User::Password, 0x80))
                     .col(boolean(User::Administrator).default(false).take())
                     .col(date_null(User::Birthday))
-                    .col(date_time_null(User::LastLoginAt))
-                    .col(date_time_null(User::LastActivityAt))
-                    .col(date_time_null(User::LockedUntil))
+                    .col(timestamp_null(User::LastLoginAt))
+                    .col(timestamp_null(User::LastActivityAt))
+                    .col(timestamp_null(User::LockedUntil))
                     .col(boolean(User::Disabled).default(false).take())
-                    .col(date_time_null(User::DisabledAt))
+                    .col(timestamp_null(User::DisabledAt))
                     .to_owned(),
             ))
             .await
