@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{net::IpAddr, path::PathBuf, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -10,6 +10,12 @@ pub struct ServerConfig {
     pub config_path: String,
     pub data_path: String,
     pub database_url: String,
+}
+
+impl ServerConfig {
+    pub fn ip_addr(&self) -> IpAddr {
+        IpAddr::from_str(&self.host).unwrap()
+    }
 }
 
 impl ServerConfig {

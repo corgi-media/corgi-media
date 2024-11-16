@@ -14,10 +14,8 @@ pub struct CorgiServer {
 }
 
 impl CorgiServer {
-    pub async fn new(
-        addr: SocketAddr,
-        config: AppConfig,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
+    pub async fn new(config: AppConfig) -> Result<Self, Box<dyn std::error::Error>> {
+        let addr = SocketAddr::new(config.server.ip_addr(), config.server.port);
         let tcp = tokio::net::TcpListener::bind(addr).await?;
 
         let state = AppState::init(config).await?;

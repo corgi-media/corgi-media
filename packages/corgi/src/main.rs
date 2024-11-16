@@ -3,7 +3,7 @@ mod commands;
 use std::{
     env,
     fs::create_dir_all,
-    net::{IpAddr, Ipv4Addr, SocketAddr},
+    net::{IpAddr, Ipv4Addr},
     path::PathBuf,
     str::FromStr,
 };
@@ -164,9 +164,7 @@ impl Cli {
 
 impl Cli {
     async fn serve(&self, config: AppConfig) {
-        let addr = SocketAddr::new(self.ip_addr(), self.port());
-
-        let server = CorgiServer::new(addr, config).await.unwrap();
+        let server = CorgiServer::new(config).await.unwrap();
 
         server.serve().await.unwrap();
     }
