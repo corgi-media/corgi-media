@@ -147,7 +147,9 @@ impl Cli {
             let path = url.split("://").nth(1).unwrap();
             let path = PathBuf::from(path);
 
-            create_dir_all(path.parent().unwrap()).unwrap();
+            if let Some(parent) = path.parent() {
+                create_dir_all(parent).unwrap();
+            }
         }
 
         url
