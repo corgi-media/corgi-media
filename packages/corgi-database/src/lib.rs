@@ -1,3 +1,4 @@
+pub mod entities;
 pub mod migrations;
 
 pub use sea_orm::{ConnectOptions, Database, DatabaseConnection, DbErr};
