@@ -2,11 +2,11 @@ use utoipa::OpenApi;
 
 #[derive(OpenApi)]
 #[openapi(info(title = "Corgi API",))]
-pub struct ApiDocs;
+pub struct Docs;
 
-pub struct ApiTags;
+pub struct Tags;
 
-impl ApiTags {
+impl Tags {
     pub const SYSTEM: &'static str = "System";
     // pub const CONFIGURATIONS: &'static str = "Configurations";
 }

@@ -1,4 +1,5 @@
-mod api_docs;
+mod handlers;
+mod openapi;
 mod routers;
 mod state;
 
