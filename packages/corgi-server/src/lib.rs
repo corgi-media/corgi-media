@@ -1,3 +1,4 @@
+mod dto;
 mod handlers;
 mod openapi;
 mod routers;

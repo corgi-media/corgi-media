@@ -14,4 +14,9 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing = "0.1.40"
 serde = { version = "1.0.211", features = ["derive"] }
 toml = "0.8.19"
-utoipa = "5.1.2"
+utoipa = { version = "5.1.1", features = ["uuid", "chrono"] }
+uuid = { version = "1.11.0", features = ["v7"] }
+chrono = "0.4.38"
+argon2 = "0.5.3"
+thiserror = "2.0.3"
+tokio = "1.41.1"

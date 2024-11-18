@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use corgi_core::{config::AppConfig, DatabaseClient};
+use corgi_core::{config::AppConfig, DatabaseClient, DatabaseConnection};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -18,5 +18,9 @@ impl AppState {
             config,
             database: Arc::new(database),
         })
+    }
+
+    pub fn database_connection(&self) -> &DatabaseConnection {
+        &self.database.connection
     }
 }

@@ -14,7 +14,8 @@ axum = "0.7.5"
 axum-extra = { version = "0.9.4", features = ["typed-header"] }
 tokio = { version = "1.41.0", features = ["full"] }
 tower-http = { version = "0.6.1", features = ["trace"] }
-utoipa = { version = "5.1.1", features = ["axum_extras"] }
+utoipa = { version = "5.1.1", features = ["axum_extras", "uuid", "chrono"] }
 utoipa-axum = "0.1.1"
 utoipa-swagger-ui = { version = "8.0.2", features = ["axum"] }
 serde = { version = "1.0.211", features = ["derive"] }
+thiserror = "2.0.3"

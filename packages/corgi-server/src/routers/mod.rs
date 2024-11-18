@@ -1,3 +1,4 @@
+mod account;
 mod api_docs;
 mod paths;
 mod system;
@@ -16,6 +17,7 @@ impl AppRouter {
     pub fn route() -> Router<AppState> {
         let (router, api) = OpenApiRouter::with_openapi(openapi::Docs::openapi())
             .merge(system::route())
+            .merge(account::route())
             .split_for_parts();
 
         router.merge(api_docs::route(api))
