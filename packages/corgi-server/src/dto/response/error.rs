@@ -51,7 +51,7 @@ impl ErrorResponse {
                 "HASH_PASSWORD_ERROR",
                 self.to_string(),
             ),
-            CoreError::Password(_) => (
+            CoreError::UserNotFound | CoreError::Password(_) => (
                 StatusCode::UNAUTHORIZED,
                 "AUTHENTICATION_FAILED",
                 "Wrong user credentials".to_string(),

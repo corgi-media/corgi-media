@@ -5,14 +5,14 @@ use corgi_database::{
     orm::{ActiveModelTrait, DatabaseConnection, Set, TryIntoModel},
 };
 
-use crate::schemas::{User as UserSchema, UserIdentity};
+use crate::schemas::{Token, User, UserIdentity};
 
 pub async fn create_account(
     db: &DatabaseConnection,
     name: String,
     username: String,
     password: String,
-) -> Result<UserSchema, crate::error::Error> {
+) -> Result<User, crate::error::Error> {
     let is_empty = super::is_table_empty(db).await?;
 
     if !is_empty {
@@ -40,5 +40,21 @@ pub async fn create_account(
 
     let model = user.try_into_model()?;
 
-    Ok(UserSchema::from(model))
+    Ok(User::from(model))
+}
+
+pub async fn create_token(
+    db: &DatabaseConnection,
+    username: String,
+    password: String,
+) -> Result<Token, crate::error::Error> {
+    let user = super::find_by_username(db, &username)
+        .await?
+        .ok_or(crate::error::Error::UserNotFound)?;
+
+    crate::utils::password::verify(&password, &user.password)?;
+
+    Ok(Token {
+        access_token: "todo!()".to_string(),
+    })
 }

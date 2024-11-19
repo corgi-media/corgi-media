@@ -65,3 +65,8 @@ impl From<UserIdentity> for i32 {
         }
     }
 }
+
+#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
+pub struct Token {
+    pub access_token: String,
+}

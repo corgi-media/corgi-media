@@ -11,6 +11,9 @@ pub enum Error {
 
     #[error("Username `{0}` is already taken")]
     UserConflict(String),
+
+    #[error("User not found")]
+    UserNotFound,
 }
 
 impl From<argon2::password_hash::Error> for Error {
