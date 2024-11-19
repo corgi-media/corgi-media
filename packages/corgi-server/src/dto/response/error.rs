@@ -17,17 +17,31 @@ pub enum ErrorResponse {
 
 impl ErrorResponse {
     pub fn response(self) -> (StatusCode, ErrorResponseBody) {
-        let message = self.to_string();
-        let (status_code, kind) = match self {
-            ErrorResponse::Core(error) => match error {
-                CoreError::Database(_) => (StatusCode::INTERNAL_SERVER_ERROR, "DATABASE_ERROR"),
-                CoreError::Password(_) => {
-                    (StatusCode::INTERNAL_SERVER_ERROR, "PASSWORD_HASH_ERROR")
-                }
-            },
+        let (status_code, kind, message) = match &self {
+            ErrorResponse::Core(error) => self.map_core_error(error),
         };
 
         (status_code, ErrorResponseBody::new(kind, message))
+    }
+
+    fn map_core_error(&self, error: &CoreError) -> (StatusCode, &'static str, String) {
+        match error {
+            CoreError::Database(_) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "DATABASE_ERROR",
+                self.to_string(),
+            ),
+            CoreError::HashPassword(_) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "HASH_PASSWORD_ERROR",
+                self.to_string(),
+            ),
+            CoreError::Password(_) => (
+                StatusCode::UNAUTHORIZED,
+                "AUTHENTICATION_FAILED",
+                "Wrong user credentials".to_string(),
+            ),
+        }
     }
 }
 
