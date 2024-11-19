@@ -10,7 +10,7 @@ pub struct User {
     pub id: Uuid,
     pub name: String,
     pub username: String,
-    pub administrator: bool,
+    pub identity: UserIdentity,
     pub birthday: Option<NaiveDate>,
     pub last_login_at: Option<DateTime<Utc>>,
     pub last_activity_at: Option<DateTime<Utc>>,
@@ -27,7 +27,7 @@ impl From<user::Model> for User {
             id: value.id,
             name: value.name,
             username: value.username,
-            administrator: value.administrator,
+            identity: value.identity.into(),
             birthday: value.birthday,
             last_login_at: value.last_login_at,
             last_activity_at: value.last_activity_at,
@@ -36,6 +36,32 @@ impl From<user::Model> for User {
             disabled_at: value.disabled_at,
             created_at: value.created_at,
             updated_at: value.updated_at,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Default, ToSchema)]
+pub enum UserIdentity {
+    Administrator,
+
+    #[default]
+    Normal,
+}
+
+impl From<i32> for UserIdentity {
+    fn from(value: i32) -> Self {
+        match value {
+            0 => UserIdentity::Administrator,
+            _ => UserIdentity::Normal,
+        }
+    }
+}
+
+impl From<UserIdentity> for i32 {
+    fn from(value: UserIdentity) -> Self {
+        match value {
+            UserIdentity::Administrator => 0,
+            UserIdentity::Normal => 1,
         }
     }
 }

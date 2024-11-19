@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                     .col(string_len(User::Name, 0x40))
                     .col(string_len_uniq(User::Username, 0x40))
                     .col(string_len(User::Password, 0x80))
-                    .col(boolean(User::Administrator).default(false).take())
+                    .col(integer(User::Identity).default(1).take())
                     .col(date_null(User::Birthday))
                     .col(timestamp_null(User::LastLoginAt))
                     .col(timestamp_null(User::LastActivityAt))
@@ -41,7 +41,7 @@ enum User {
     Name,
     Username,
     Password,
-    Administrator,
+    Identity,
     Birthday,
     LastLoginAt,
     LastActivityAt,

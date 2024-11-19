@@ -5,7 +5,7 @@ use corgi_database::{
     orm::{ActiveModelTrait, DatabaseConnection, Set, TryIntoModel},
 };
 
-use crate::schemas::User as UserSchema;
+use crate::schemas::{User as UserSchema, UserIdentity};
 
 pub async fn create_account(
     db: &DatabaseConnection,
@@ -20,7 +20,11 @@ pub async fn create_account(
             return Err(crate::error::Error::UserConflict(existed.username));
         }
     }
-
+    let identity = if is_empty {
+        UserIdentity::Administrator
+    } else {
+        UserIdentity::Normal
+    };
     let hashed_password = crate::utils::password::hash(password)?;
 
     let user = user::ActiveModel {
@@ -28,7 +32,7 @@ pub async fn create_account(
         name: Set(name),
         username: Set(username),
         password: Set(hashed_password),
-        administrator: Set(is_empty),
+        identity: Set(identity.into()),
         ..Default::default()
     }
     .insert(db)

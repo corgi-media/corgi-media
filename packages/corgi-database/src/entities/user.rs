@@ -11,7 +11,7 @@ pub struct Model {
     #[sea_orm(unique)]
     pub username: String,
     pub password: String,
-    pub administrator: bool,
+    pub identity: i32,
     pub birthday: Option<Date>,
     pub last_login_at: Option<DateTimeUtc>,
     pub last_activity_at: Option<DateTimeUtc>,
