@@ -1,13 +1,13 @@
-use axum::{extract::State, Json};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+
+use corgi_core::{schemas::User as UserSchema, services::user};
 
 use crate::{
-    dto::{AccountCreateRequest, ResponseResult},
+    dto::{AccountCreateRequest, ErrorResponseBody, ResponseResult},
     openapi::Tags,
     routers::Paths,
     state::AppState,
 };
-
-use corgi_core::{schemas::User as UserSchema, services::user};
 
 #[utoipa::path(
     post,
@@ -15,14 +15,15 @@ use corgi_core::{schemas::User as UserSchema, services::user};
     path = Paths::ACCOUNT,
     tag = Tags::ACCOUNT,
     responses(
-        (status = OK, description = "Create a Account (Sign Up)", body = UserSchema)
+        (status = CREATED, description = "Create a Account (Sign Up)", body = UserSchema),
+        (status = CONFLICT, description = "Username conflicts", body = ErrorResponseBody)
     )
 )]
 
 pub async fn create(
     State(state): State<AppState>,
     Json(req): Json<AccountCreateRequest>,
-) -> ResponseResult<Json<UserSchema>> {
+) -> ResponseResult<impl IntoResponse> {
     let user = user::account_create(
         state.database_connection(),
         req.name,
@@ -31,5 +32,5 @@ pub async fn create(
     )
     .await?;
 
-    Ok(Json(user))
+    Ok((StatusCode::CREATED, Json(user)))
 }
