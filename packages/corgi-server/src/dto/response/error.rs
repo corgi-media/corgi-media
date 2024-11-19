@@ -1,4 +1,5 @@
 use axum::{
+    extract::rejection::JsonRejection,
     http::StatusCode,
     response::{IntoResponse, Response},
     Json,
@@ -13,12 +14,26 @@ use corgi_core::error::Error as CoreError;
 pub enum ErrorResponse {
     #[error(transparent)]
     Core(#[from] CoreError),
+
+    #[error(transparent)]
+    JsonRejection(#[from] JsonRejection),
+
+    #[error(transparent)]
+    Validation(#[from] garde::Report),
 }
 
 impl ErrorResponse {
     pub fn response(self) -> (StatusCode, ErrorResponseBody) {
         let (status_code, kind, message) = match &self {
             ErrorResponse::Core(error) => self.map_core_error(error),
+            ErrorResponse::JsonRejection(_) => {
+                (StatusCode::BAD_REQUEST, "JSON_REJECTION", self.to_string())
+            }
+            ErrorResponse::Validation(_) => (
+                StatusCode::UNPROCESSABLE_ENTITY,
+                "VALIDATION_FAILED",
+                self.to_string(),
+            ),
         };
 
         (status_code, ErrorResponseBody::new(kind, message))

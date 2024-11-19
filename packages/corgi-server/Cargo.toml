@@ -19,3 +19,4 @@ utoipa-axum = "0.1.1"
 utoipa-swagger-ui = { version = "8.0.2", features = ["axum"] }
 serde = { version = "1.0.211", features = ["derive"] }
 thiserror = "2.0.3"
+garde = { version = "0.20.0", features = ["full"] }

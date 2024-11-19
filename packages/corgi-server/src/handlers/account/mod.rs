@@ -3,7 +3,7 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use corgi_core::{schemas::User as UserSchema, services::user};
 
 use crate::{
-    dto::{AccountCreateRequest, ErrorResponseBody, ResponseResult},
+    dto::{AccountCreateRequest, ErrorResponseBody, ResponseResult, ValidatedJson},
     openapi::Tags,
     routers::Paths,
     state::AppState,
@@ -16,13 +16,14 @@ use crate::{
     tag = Tags::ACCOUNT,
     responses(
         (status = CREATED, description = "Create a Account (Sign Up)", body = UserSchema),
-        (status = CONFLICT, description = "Username conflicts", body = ErrorResponseBody)
+        (status = CONFLICT, description = "Username conflicts", body = ErrorResponseBody),
+        (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponseBody),
     )
 )]
 
 pub async fn create(
     State(state): State<AppState>,
-    Json(req): Json<AccountCreateRequest>,
+    ValidatedJson(req): ValidatedJson<AccountCreateRequest>,
 ) -> ResponseResult<impl IntoResponse> {
     let user = user::account_create(
         state.database_connection(),
