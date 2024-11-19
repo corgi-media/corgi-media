@@ -13,7 +13,7 @@ pub async fn account_create(
     username: String,
     password: String,
 ) -> Result<UserSchema, crate::error::Error> {
-    let is_empty = super::is_user_table_empty(db).await?;
+    let is_empty = super::is_table_empty(db).await?;
     let hashed_password = crate::utils::password::hash(password)?;
 
     let user = user::ActiveModel {
