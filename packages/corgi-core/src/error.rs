@@ -8,6 +8,9 @@ pub enum Error {
 
     #[error("{0}")]
     Password(String),
+
+    #[error("Username `{0}` is already taken")]
+    UserConflict(String),
 }
 
 impl From<argon2::password_hash::Error> for Error {

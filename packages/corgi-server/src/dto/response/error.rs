@@ -41,6 +41,7 @@ impl ErrorResponse {
                 "AUTHENTICATION_FAILED",
                 "Wrong user credentials".to_string(),
             ),
+            CoreError::UserConflict(_) => (StatusCode::CONFLICT, "USER_CONFLICT", self.to_string()),
         }
     }
 }

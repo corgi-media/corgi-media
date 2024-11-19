@@ -16,6 +16,12 @@ pub async fn account_create(
     let is_empty = super::is_table_empty(db).await?;
     let hashed_password = crate::utils::password::hash(password)?;
 
+    let existing_user = super::find_by_username(db, &username).await?;
+
+    if let Some(existed) = existing_user {
+        return Err(crate::error::Error::UserConflict(existed.username));
+    }
+
     let user = user::ActiveModel {
         id: Set(Uuid::now_v7()),
         name: Set(name),
