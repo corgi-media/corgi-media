@@ -7,20 +7,21 @@ use corgi_database::{
 
 use crate::schemas::User as UserSchema;
 
-pub async fn account_create(
+pub async fn create_account(
     db: &DatabaseConnection,
     name: String,
     username: String,
     password: String,
 ) -> Result<UserSchema, crate::error::Error> {
     let is_empty = super::is_table_empty(db).await?;
-    let hashed_password = crate::utils::password::hash(password)?;
 
-    let existing_user = super::find_by_username(db, &username).await?;
-
-    if let Some(existed) = existing_user {
-        return Err(crate::error::Error::UserConflict(existed.username));
+    if !is_empty {
+        if let Some(existed) = super::find_by_username(db, &username).await? {
+            return Err(crate::error::Error::UserConflict(existed.username));
+        }
     }
+
+    let hashed_password = crate::utils::password::hash(password)?;
 
     let user = user::ActiveModel {
         id: Set(Uuid::now_v7()),
