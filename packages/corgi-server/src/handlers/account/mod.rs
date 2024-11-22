@@ -25,13 +25,13 @@ use crate::{
 )]
 pub async fn create(
     State(state): State<AppState>,
-    ValidatedJson(req): ValidatedJson<SignUpRequest>,
+    ValidatedJson(payload): ValidatedJson<SignUpRequest>,
 ) -> ResponseResult<impl IntoResponse> {
     let result = user::create_account(
         state.database_connection(),
-        req.name,
-        req.username,
-        req.password,
+        payload.name,
+        payload.username,
+        payload.password,
     )
     .await?;
 
@@ -51,13 +51,13 @@ pub async fn create(
 )]
 pub async fn create_token(
     State(state): State<AppState>,
-    ValidatedJson(req): ValidatedJson<SignInRequest>,
+    ValidatedJson(payload): ValidatedJson<SignInRequest>,
 ) -> ResponseResult<impl IntoResponse> {
     let result = user::create_token(
         state.database_connection(),
         &state.config.keyring.privite_key,
-        req.username,
-        req.password,
+        payload.username,
+        payload.password,
     )
     .await?;
 
