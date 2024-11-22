@@ -9,7 +9,7 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub async fn init(config: AppConfig) -> Result<Self, Box<dyn std::error::Error>> {
+    pub async fn build(config: AppConfig) -> Result<Self, Box<dyn std::error::Error>> {
         let config = Arc::new(config);
         let database = DatabaseClient::connect(&config.server.database_url).await?;
         database.migration_up().await?;

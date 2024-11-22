@@ -20,7 +20,7 @@ impl CorgiServer {
         let addr = SocketAddr::new(config.server.ip_addr(), config.server.port);
         let tcp = tokio::net::TcpListener::bind(addr).await?;
 
-        let state = AppState::init(config).await?;
+        let state = AppState::build(config).await?;
 
         Ok(Self { state, tcp })
     }
