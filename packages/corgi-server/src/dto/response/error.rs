@@ -57,6 +57,7 @@ impl ErrorResponse {
                 "Wrong user credentials".to_string(),
             ),
             CoreError::UserConflict(_) => (StatusCode::CONFLICT, "USER_CONFLICT", self.to_string()),
+            CoreError::JWT(_) => (StatusCode::UNAUTHORIZED, "JWT_ERROR", self.to_string()),
         }
     }
 }

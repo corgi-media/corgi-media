@@ -2,7 +2,7 @@ use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-use corgi_database::entities::user;
+use corgi_database::{entities::user, orm::strum::Display};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, ToSchema, Default, Debug, Clone)]
@@ -40,7 +40,7 @@ impl From<user::Model> for User {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Default, ToSchema)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default, Display, ToSchema)]
 pub enum UserIdentity {
     Administrator,
 

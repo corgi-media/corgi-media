@@ -14,6 +14,9 @@ pub enum Error {
 
     #[error("User not found")]
     UserNotFound,
+
+    #[error(transparent)]
+    JWT(#[from] jsonwebtoken::errors::Error),
 }
 
 impl From<argon2::password_hash::Error> for Error {

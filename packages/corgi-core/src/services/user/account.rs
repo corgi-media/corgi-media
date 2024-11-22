@@ -1,3 +1,4 @@
+use jsonwebtoken::EncodingKey;
 use uuid::Uuid;
 
 use corgi_database::{
@@ -5,7 +6,10 @@ use corgi_database::{
     orm::{ActiveModelTrait, DatabaseConnection, Set, TryIntoModel},
 };
 
-use crate::schemas::{Token, User, UserIdentity};
+use crate::{
+    schemas::{Token, User, UserIdentity},
+    utils::claims::Claims,
+};
 
 pub async fn create_account(
     db: &DatabaseConnection,
@@ -45,6 +49,7 @@ pub async fn create_account(
 
 pub async fn create_token(
     db: &DatabaseConnection,
+    privite_key: &str,
     username: String,
     password: String,
 ) -> Result<Token, crate::error::Error> {
@@ -54,7 +59,13 @@ pub async fn create_token(
 
     crate::utils::password::verify(&password, &user.password)?;
 
-    Ok(Token {
-        access_token: "todo!()".to_string(),
-    })
+    let claims = Claims::new(
+        UserIdentity::from(user.identity).to_string(),
+        user.id.to_string(),
+        30,
+    );
+    let encoding_key = EncodingKey::from_ed_pem(privite_key.as_bytes())?;
+    let access_token = claims.encode(&encoding_key)?;
+
+    Ok(Token { access_token })
 }

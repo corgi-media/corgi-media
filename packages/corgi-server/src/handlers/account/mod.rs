@@ -53,8 +53,13 @@ pub async fn create_token(
     State(state): State<AppState>,
     ValidatedJson(req): ValidatedJson<SignInRequest>,
 ) -> ResponseResult<impl IntoResponse> {
-    let result =
-        user::create_token(state.database_connection(), req.username, req.password).await?;
+    let result = user::create_token(
+        state.database_connection(),
+        &state.config.keyring.privite_key,
+        req.username,
+        req.password,
+    )
+    .await?;
 
     Ok((StatusCode::CREATED, Json(result)))
 }
