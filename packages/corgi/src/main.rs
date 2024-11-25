@@ -168,7 +168,7 @@ impl Cli {
 
         server.serve().await.unwrap();
     }
-    async fn make_config(&self) -> Result<AppConfig, Box<dyn std::error::Error>> {
+    fn make_config(&self) -> Result<AppConfig, Box<dyn std::error::Error>> {
         let server_config = ServerConfig {
             host: self.ip_addr().to_string(),
             port: self.port(),
@@ -177,7 +177,7 @@ impl Cli {
             database_url: self.database_url(),
         };
 
-        AppConfig::build(server_config).await
+        AppConfig::build(server_config)
     }
 }
 #[tokio::main]
@@ -187,7 +187,7 @@ async fn main() {
     dotenv().ok();
     tracing::init();
 
-    let config = cli.make_config().await.unwrap();
+    let config = cli.make_config().unwrap();
 
     match &cli.commands {
         Some(Commands::Library(library)) => library.run().await,

@@ -14,8 +14,8 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
-    pub async fn build(server: ServerConfig) -> Result<Self, Box<dyn std::error::Error>> {
-        let keyring = Keyring::build(&server.config_path_buf().join("keyring")).await?;
+    pub fn build(server: ServerConfig) -> Result<Self, Box<dyn std::error::Error>> {
+        let keyring = Keyring::build(&server.config_path_buf().join("keyring"))?;
 
         Ok(Self { server, keyring })
     }

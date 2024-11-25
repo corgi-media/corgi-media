@@ -1,4 +1,4 @@
-use std::{fs::create_dir_all, path::Path};
+use std::{fs, path::Path};
 
 use ed25519_dalek::{
     pkcs8::{
@@ -21,13 +21,13 @@ pub struct Keyring {
 }
 
 impl Keyring {
-    pub async fn build(path: &Path) -> Result<Self, KeyringError> {
+    pub fn build(path: &Path) -> Result<Self, KeyringError> {
         tracing::info!("Reading keyring from path: {:?}", path);
         let id_ed25519 = path.join(ID_ED25519);
         let id_ed25519_pub = path.join(ID_ED25519_PUB);
 
-        let privite_key = tokio::fs::read_to_string(&id_ed25519).await;
-        let public_key = tokio::fs::read_to_string(&id_ed25519_pub).await;
+        let privite_key = fs::read_to_string(&id_ed25519);
+        let public_key = fs::read_to_string(&id_ed25519_pub);
 
         match (privite_key, public_key) {
             (Ok(privite_key), Ok(public_key)) => {
@@ -39,20 +39,20 @@ impl Keyring {
                     public_key,
                 })
             }
-            _ => Self::generate_keys(path).await,
+            _ => Self::generate_keys(path),
         }
     }
 
-    pub async fn generate_keys(path: &Path) -> Result<Self, KeyringError> {
+    pub fn generate_keys(path: &Path) -> Result<Self, KeyringError> {
         let (privite_key, public_key) = Self::generate_ed25519_keys()?;
 
         tracing::info!("Generated privite key: \n{}", privite_key);
         tracing::info!("Generated public key: \n{} ", public_key);
 
         tracing::info!("Writing keys to path: {:?}", path);
-        create_dir_all(path)?;
-        tokio::fs::write(&path.join(ID_ED25519), &privite_key).await?;
-        tokio::fs::write(&path.join(ID_ED25519_PUB), &public_key).await?;
+        fs::create_dir_all(path)?;
+        fs::write(path.join(ID_ED25519), &privite_key)?;
+        fs::write(path.join(ID_ED25519_PUB), &public_key)?;
 
         Ok(Self {
             privite_key,
