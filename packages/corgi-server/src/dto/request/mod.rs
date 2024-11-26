@@ -9,12 +9,12 @@ use axum::{
     Json, RequestPartsExt,
 };
 use axum_extra::{
-    headers::{authorization::Bearer, Authorization},
+    headers::{authorization::Bearer, Authorization as AuthorizationHeader},
     TypedHeader,
 };
 use corgi_core::{
     entities::user,
-    utils::{authentication::Authentication, claims::Claims},
+    utils::{authentication::Authentication, authorization::Authorization, claims::Claims},
 };
 use garde::Validate;
 use serde::de::DeserializeOwned;
@@ -61,7 +61,7 @@ where
 #[async_trait]
 impl<T> FromRequestParts<AppState> for AuthorizedClaims<T>
 where
-    T: Authentication,
+    T: Authentication + Authorization,
 {
     type Rejection = super::ErrorResponse;
 
@@ -69,14 +69,16 @@ where
         parts: &mut Parts,
         state: &AppState,
     ) -> Result<Self, Self::Rejection> {
-        let TypedHeader(Authorization(bearer)) = parts
-            .extract::<TypedHeader<Authorization<Bearer>>>()
+        let TypedHeader(AuthorizationHeader(bearer)) = parts
+            .extract::<TypedHeader<AuthorizationHeader<Bearer>>>()
             .await?;
 
         let claims = Claims::decode(bearer.token(), &state.keyring().public_key)
             .map_err(corgi_core::error::Error::JWT)?;
 
         let user = T::authenticate(state.database_connection(), &claims).await?;
+
+        T::authorize(&claims, &user).map_err(corgi_core::error::Error::Authorization)?;
 
         Ok(AuthorizedClaims::new(user))
     }

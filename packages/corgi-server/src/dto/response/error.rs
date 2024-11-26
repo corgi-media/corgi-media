@@ -67,6 +67,11 @@ impl ErrorResponse {
             ),
             CoreError::UserConflict(_) => (StatusCode::CONFLICT, "USER_CONFLICT", self.to_string()),
             CoreError::JWT(_) => (StatusCode::UNAUTHORIZED, "JWT_ERROR", self.to_string()),
+            CoreError::Authorization(_) => (
+                StatusCode::FORBIDDEN,
+                "AUTHORIZATION_FAILED",
+                self.to_string(),
+            ),
         }
     }
 }
