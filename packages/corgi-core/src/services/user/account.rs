@@ -1,4 +1,3 @@
-use jsonwebtoken::EncodingKey;
 use uuid::Uuid;
 
 use corgi_database::{
@@ -8,7 +7,7 @@ use corgi_database::{
 
 use crate::{
     schemas::{Token, User, UserIdentity},
-    utils::claims::Claims,
+    utils::claims::{Audience, Claims},
 };
 
 pub async fn create_account(
@@ -20,7 +19,7 @@ pub async fn create_account(
     let is_empty = super::is_table_empty(db).await?;
 
     if !is_empty {
-        if let Some(existed) = super::find_by_username(db, &username).await? {
+        if let Some(existed) = super::find_option_by_username(db, &username).await? {
             return Err(crate::error::Error::UserConflict(existed.username));
         }
     }
@@ -53,19 +52,13 @@ pub async fn create_token(
     username: String,
     password: String,
 ) -> Result<Token, crate::error::Error> {
-    let user = super::find_by_username(db, &username)
-        .await?
-        .ok_or(crate::error::Error::UserNotFound)?;
+    let user = super::find_by_username(db, &username).await?;
 
     crate::utils::password::verify(&password, &user.password)?;
 
-    let claims = Claims::new(
-        UserIdentity::from(user.identity).to_string(),
-        user.id.to_string(),
-        30,
-    );
-    let encoding_key = EncodingKey::from_ed_pem(privite_key.as_bytes())?;
-    let access_token = claims.encode(&encoding_key)?;
+    let claims = Claims::new(Audience::User, user.id, user.username, 30);
+
+    let access_token = claims.encode(privite_key)?;
 
     Ok(Token { access_token })
 }

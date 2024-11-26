@@ -5,6 +5,7 @@ use axum::{
     Json,
 };
 
+use axum_extra::typed_header::TypedHeaderRejection;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
@@ -19,6 +20,9 @@ pub enum ErrorResponse {
     JsonRejection(#[from] JsonRejection),
 
     #[error(transparent)]
+    TypedHeaderRejection(#[from] TypedHeaderRejection),
+
+    #[error(transparent)]
     Validation(#[from] garde::Report),
 }
 
@@ -29,6 +33,11 @@ impl ErrorResponse {
             ErrorResponse::JsonRejection(_) => {
                 (StatusCode::BAD_REQUEST, "JSON_REJECTION", self.to_string())
             }
+            ErrorResponse::TypedHeaderRejection(_) => (
+                StatusCode::BAD_REQUEST,
+                "TYPED_HEADER_REJECTION",
+                self.to_string(),
+            ),
             ErrorResponse::Validation(_) => (
                 StatusCode::UNPROCESSABLE_ENTITY,
                 "VALIDATION_FAILED",

@@ -3,10 +3,14 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use corgi_core::{
     schemas::{Token, User},
     services::user,
+    utils::authentication::UserAuthentication,
 };
 
 use crate::{
-    dto::{ErrorResponseBody, ResponseResult, SignInRequest, SignUpRequest, ValidatedJson},
+    dto::{
+        AuthorizedClaims, ErrorResponseBody, ResponseResult, SignInRequest, SignUpRequest,
+        ValidatedJson,
+    },
     openapi::Tags,
     routers::Paths,
     state::AppState,
@@ -55,11 +59,23 @@ pub async fn create_token(
 ) -> ResponseResult<impl IntoResponse> {
     let result = user::create_token(
         state.database_connection(),
-        &state.config.keyring.privite_key,
+        &state.keyring().privite_key,
         payload.username,
         payload.password,
     )
     .await?;
 
     Ok((StatusCode::CREATED, Json(result)))
+}
+
+#[utoipa::path(
+    get,
+    path = Paths::ACCOUNT,
+    tag = Tags::ACCOUNT,
+    responses(
+        (status = OK, description = "Get account information", body = User),
+    )
+)]
+pub async fn get(auth: AuthorizedClaims<UserAuthentication>) -> Json<User> {
+    Json(auth.user.into())
 }

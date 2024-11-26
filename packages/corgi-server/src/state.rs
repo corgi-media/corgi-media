@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use corgi_core::{config::AppConfig, DatabaseClient, DatabaseConnection};
+use corgi_core::{
+    config::{AppConfig, Keyring},
+    DatabaseClient, DatabaseConnection,
+};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -22,5 +25,9 @@ impl AppState {
 
     pub fn database_connection(&self) -> &DatabaseConnection {
         &self.database.connection
+    }
+
+    pub fn keyring(&self) -> &Keyring {
+        &self.config.keyring
     }
 }
