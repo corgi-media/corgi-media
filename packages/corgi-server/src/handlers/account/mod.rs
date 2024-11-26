@@ -74,6 +74,9 @@ pub async fn create_token(
     tag = Tags::ACCOUNT,
     responses(
         (status = OK, description = "Get account information", body = User),
+    ),
+    security(
+        ("JWT" = [])
     )
 )]
 pub async fn get(auth: AuthorizedClaims<UserAuthentication>) -> Json<User> {
