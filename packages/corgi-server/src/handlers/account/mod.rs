@@ -1,16 +1,11 @@
+pub mod token;
+
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
-use corgi_core::{
-    schemas::{Token, User},
-    services::user,
-    utils::authentication::UserAuthentication,
-};
+use corgi_core::{schemas::User, services::user, utils::authentication::UserAuthentication};
 
 use crate::{
-    dto::{
-        AuthorizedClaims, ErrorResponseBody, ResponseResult, SignInRequest, SignUpRequest,
-        ValidatedJson,
-    },
+    dto::{AuthorizedClaims, ErrorResponseBody, ResponseResult, SignUpRequest, ValidatedJson},
     openapi::Tags,
     routers::Paths,
     state::AppState,
@@ -34,32 +29,6 @@ pub async fn create(
     let result = user::create_account(
         state.database_connection(),
         payload.name,
-        payload.username,
-        payload.password,
-    )
-    .await?;
-
-    Ok((StatusCode::CREATED, Json(result)))
-}
-
-#[utoipa::path(
-    post,
-    request_body = SignInRequest,
-    path = Paths::ACCOUNT_TOKEN,
-    tag = Tags::ACCOUNT,
-    responses(
-        (status = CREATED, description = "Request token (Sign In)", body = Token),
-        (status = UNAUTHORIZED, description = "Wrong user credentials", body = ErrorResponseBody),
-        (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponseBody),
-    )
-)]
-pub async fn create_token(
-    State(state): State<AppState>,
-    ValidatedJson(payload): ValidatedJson<SignInRequest>,
-) -> ResponseResult<impl IntoResponse> {
-    let result = user::create_token(
-        state.database_connection(),
-        &state.keyring().privite_key,
         payload.username,
         payload.password,
     )
