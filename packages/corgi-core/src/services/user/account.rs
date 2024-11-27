@@ -10,7 +10,7 @@ use crate::{
     utils::claims::{Audience, Claims},
 };
 
-pub async fn create_account(
+pub async fn create(
     db: &DatabaseConnection,
     name: String,
     username: String,

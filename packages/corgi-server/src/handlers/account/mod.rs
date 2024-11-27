@@ -26,7 +26,7 @@ pub async fn create(
     State(state): State<AppState>,
     ValidatedJson(payload): ValidatedJson<SignUpRequest>,
 ) -> ResponseResult<impl IntoResponse> {
-    let result = user::create_account(
+    let result = user::account::create(
         state.database_connection(),
         payload.name,
         payload.username,

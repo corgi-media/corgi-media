@@ -24,7 +24,7 @@ pub async fn create(
     State(state): State<AppState>,
     ValidatedJson(payload): ValidatedJson<SignInRequest>,
 ) -> ResponseResult<impl IntoResponse> {
-    let result = user::create_token(
+    let result = user::account::create_token(
         state.database_connection(),
         &state.keyring().privite_key,
         payload.username,
