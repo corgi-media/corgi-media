@@ -74,6 +74,8 @@ pub async fn create_token(
     tag = Tags::ACCOUNT,
     responses(
         (status = OK, description = "Get account information", body = User),
+        (status = UNAUTHORIZED, description = "Unauthorized", body = ErrorResponseBody),
+        (status = FORBIDDEN, description = "Forbidden", body = ErrorResponseBody),
     ),
     security(
         ("JWT" = [])
