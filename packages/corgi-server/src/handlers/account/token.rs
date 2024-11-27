@@ -10,15 +10,15 @@ use crate::{
 };
 
 #[utoipa::path(
-  post,
-  request_body = SignInRequest,
-  path = Paths::ACCOUNT_TOKEN,
-  tag = Tags::ACCOUNT,
-  responses(
-      (status = CREATED, description = "Request token (Sign In)", body = Token),
-      (status = UNAUTHORIZED, description = "Wrong user credentials", body = ErrorResponseBody),
-      (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponseBody),
-  )
+    post,
+    request_body = SignInRequest,
+    path = Paths::ACCOUNT_TOKEN,
+    tag = Tags::ACCOUNT,
+    responses(
+        (status = CREATED, description = "Request token (Sign In)", body = Token),
+        (status = UNAUTHORIZED, description = "Wrong user credentials", body = ErrorResponseBody),
+        (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponseBody),
+    )
 )]
 pub async fn create(
     State(state): State<AppState>,
