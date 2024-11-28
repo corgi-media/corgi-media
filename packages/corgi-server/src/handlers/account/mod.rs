@@ -2,10 +2,12 @@ pub mod token;
 
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
-use corgi_core::{schemas::User, services::user, utils::authentication::UserAuthentication};
+use corgi_core::{account, security::authentication::UserAuthentication};
 
 use crate::{
-    dto::{AuthorizedClaims, ErrorResponseBody, ResponseResult, SignUpRequest, ValidatedJson},
+    dto::{
+        AuthorizedClaims, ErrorResponseBody, ResponseResult, SignUpRequest, User, ValidatedJson,
+    },
     openapi::Tags,
     routers::Paths,
     state::AppState,
@@ -26,13 +28,14 @@ pub async fn create(
     State(state): State<AppState>,
     ValidatedJson(payload): ValidatedJson<SignUpRequest>,
 ) -> ResponseResult<impl IntoResponse> {
-    let result = user::account::create(
+    let result: User = account::create(
         state.database_connection(),
         payload.name,
         payload.username,
         payload.password,
     )
-    .await?;
+    .await?
+    .into();
 
     Ok((StatusCode::CREATED, Json(result)))
 }

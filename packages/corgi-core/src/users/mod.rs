@@ -1,5 +1,3 @@
-pub mod account;
-
 use uuid::Uuid;
 
 use corgi_database::{

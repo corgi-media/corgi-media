@@ -1,14 +1,14 @@
 use corgi_database::{entities::user, orm::DatabaseConnection};
 
-use super::claims::Claims;
-use crate::{error::Error, services::user::find_by_id};
+use super::jwt::Claims;
+use crate::{error::Error, users};
 
 pub trait Authentication {
     fn authenticate(
         db: &DatabaseConnection,
         claims: &Claims,
     ) -> impl std::future::Future<Output = Result<user::Model, Error>> + Send {
-        async { find_by_id(db, claims.iss).await }
+        async { users::find_by_id(db, claims.iss).await }
     }
 }
 

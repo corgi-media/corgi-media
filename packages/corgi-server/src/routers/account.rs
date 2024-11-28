@@ -6,5 +6,5 @@ use crate::state::AppState;
 pub fn route() -> OpenApiRouter<AppState> {
     OpenApiRouter::new()
         .routes(routes!(account::create, account::get))
-        .routes(routes!(account::token::create))
+        .routes(routes!(account::token::create_token))
 }

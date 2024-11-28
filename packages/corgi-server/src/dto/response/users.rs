@@ -1,16 +1,18 @@
-use chrono::{DateTime, NaiveDate, Utc};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use utoipa::ToSchema;
-use uuid::Uuid;
 
-use corgi_database::{entities::user, orm::strum::Display};
+use corgi_core::{
+    chrono::{DateTime, NaiveDate, Utc},
+    entities::user,
+    uuid::Uuid,
+};
 
-#[derive(Serialize, Deserialize, ToSchema, Default, Debug, Clone)]
+#[derive(Serialize, ToSchema)]
 pub struct User {
     pub id: Uuid,
     pub name: String,
     pub username: String,
-    pub identity: UserIdentity,
+    pub identity: i32,
     pub birthday: Option<NaiveDate>,
     pub last_login_at: Option<DateTime<Utc>>,
     pub last_activity_at: Option<DateTime<Utc>>,
@@ -27,7 +29,7 @@ impl From<user::Model> for User {
             id: value.id,
             name: value.name,
             username: value.username,
-            identity: value.identity.into(),
+            identity: value.identity,
             birthday: value.birthday,
             last_login_at: value.last_login_at,
             last_activity_at: value.last_activity_at,
@@ -38,35 +40,4 @@ impl From<user::Model> for User {
             updated_at: value.updated_at,
         }
     }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, Default, Display, ToSchema)]
-pub enum UserIdentity {
-    Administrator,
-
-    #[default]
-    Normal,
-}
-
-impl From<i32> for UserIdentity {
-    fn from(value: i32) -> Self {
-        match value {
-            0 => UserIdentity::Administrator,
-            _ => UserIdentity::Normal,
-        }
-    }
-}
-
-impl From<UserIdentity> for i32 {
-    fn from(value: UserIdentity) -> Self {
-        match value {
-            UserIdentity::Administrator => 0,
-            UserIdentity::Normal => 1,
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
-pub struct Token {
-    pub access_token: String,
 }

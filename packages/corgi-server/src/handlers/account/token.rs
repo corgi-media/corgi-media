@@ -1,9 +1,9 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
-use corgi_core::{schemas::Token, services::user};
+use corgi_core::account;
 
 use crate::{
-    dto::{ErrorResponseBody, ResponseResult, SignInRequest, ValidatedJson},
+    dto::{ErrorResponseBody, ResponseResult, SignInRequest, Token, ValidatedJson},
     openapi::Tags,
     routers::Paths,
     state::AppState,
@@ -20,11 +20,11 @@ use crate::{
         (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponseBody),
     )
 )]
-pub async fn create(
+pub async fn create_token(
     State(state): State<AppState>,
     ValidatedJson(payload): ValidatedJson<SignInRequest>,
 ) -> ResponseResult<impl IntoResponse> {
-    let result = user::account::create_token(
+    let access_token = account::token::create(
         state.database_connection(),
         &state.keyring().privite_key,
         payload.username,
@@ -32,5 +32,5 @@ pub async fn create(
     )
     .await?;
 
-    Ok((StatusCode::CREATED, Json(result)))
+    Ok((StatusCode::CREATED, Json(Token { access_token })))
 }

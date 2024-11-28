@@ -19,7 +19,7 @@ pub enum Error {
     JWT(#[from] jsonwebtoken::errors::Error),
 
     #[error(transparent)]
-    Authorization(#[from] crate::utils::authorization::Error),
+    Authorization(#[from] crate::security::authorization::Error),
 }
 
 impl From<argon2::password_hash::Error> for Error {

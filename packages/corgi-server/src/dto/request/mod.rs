@@ -17,7 +17,7 @@ use serde::de::DeserializeOwned;
 
 use corgi_core::{
     entities::user,
-    utils::{authentication::Authentication, authorization::Authorization, claims::Claims},
+    security::{authentication::Authentication, authorization::Authorization, jwt::Claims},
 };
 
 use crate::state::AppState;

@@ -2,7 +2,7 @@ use corgi_database::entities::user;
 
 use super::{
     authentication::{AdminAuthentication, MixedAuthentication, UserAuthentication},
-    claims::{Audience, Claims},
+    jwt::{Audience, Claims},
 };
 
 #[derive(Debug, thiserror::Error)]
