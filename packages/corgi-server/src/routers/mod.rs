@@ -2,6 +2,7 @@ mod account;
 mod api_docs;
 mod paths;
 mod system;
+mod users;
 
 use axum::Router;
 use utoipa::OpenApi;
@@ -18,6 +19,7 @@ impl AppRouter {
         let (router, api) = OpenApiRouter::with_openapi(openapi::Docs::openapi())
             .merge(system::route())
             .merge(account::route())
+            .merge(users::route())
             .split_for_parts();
 
         router.merge(api_docs::route(api))

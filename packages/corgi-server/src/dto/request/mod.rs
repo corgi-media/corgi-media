@@ -1,4 +1,5 @@
 mod account;
+mod users;
 
 use std::marker::PhantomData;
 
@@ -22,6 +23,7 @@ use corgi_core::{
 
 use crate::state::AppState;
 pub use account::*;
+pub use users::*;
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct ValidatedJson<T>(pub T);

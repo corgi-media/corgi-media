@@ -15,9 +15,10 @@ use crate::{
 
 #[utoipa::path(
     post,
-    request_body = SignUpRequest,
     path = Paths::ACCOUNT,
     tag = Tags::ACCOUNT,
+    operation_id = "sign_up",
+    request_body = SignUpRequest,
     responses(
         (status = CREATED, description = "Create a account (Sign Up)", body = User),
         (status = CONFLICT, description = "Username conflicts", body = ErrorResponseBody),
@@ -44,6 +45,7 @@ pub async fn create(
     get,
     path = Paths::ACCOUNT,
     tag = Tags::ACCOUNT,
+    operation_id = "account_information",
     responses(
         (status = OK, description = "Get account information", body = User),
         (status = UNAUTHORIZED, description = "Unauthorized", body = ErrorResponseBody),

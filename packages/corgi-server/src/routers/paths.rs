@@ -14,3 +14,7 @@ impl Paths {
     pub const ACCOUNT: &'static str = "/account";
     pub const ACCOUNT_TOKEN: &'static str = "/account/token";
 }
+
+impl Paths {
+    pub const USERS: &'static str = "/users";
+}

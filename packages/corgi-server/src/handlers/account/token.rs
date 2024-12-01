@@ -14,6 +14,7 @@ use crate::{
     request_body = SignInRequest,
     path = Paths::ACCOUNT_TOKEN,
     tag = Tags::ACCOUNT,
+    operation_id = "sign_in",
     responses(
         (status = CREATED, description = "Request token (Sign In)", body = Token),
         (status = UNAUTHORIZED, description = "Wrong user credentials", body = ErrorResponseBody),

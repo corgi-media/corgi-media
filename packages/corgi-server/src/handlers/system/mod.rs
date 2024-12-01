@@ -13,6 +13,7 @@ pub struct SystemStatus {
     get,
     path = Paths::SYSTEM_PING,
     tag = Tags::SYSTEM,
+    operation_id = "system_ping",
     responses(
         (status = OK, description = "Ping the system")
     )
@@ -25,6 +26,7 @@ pub async fn ping() -> &'static str {
     get,
     path = Paths::SYSTEM_STATUS,
     tag = Tags::SYSTEM,
+    operation_id = "system_status",
     responses(
         (status = OK, description = "Get the status of the system", body = SystemStatus)
     )

@@ -29,4 +29,5 @@ impl Tags {
     pub const SYSTEM: &'static str = "System";
     // pub const CONFIGURATIONS: &'static str = "Configurations";
     pub const ACCOUNT: &'static str = "Account";
+    pub const USERS: &'static str = "Users";
 }
