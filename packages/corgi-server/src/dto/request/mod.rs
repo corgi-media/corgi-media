@@ -4,7 +4,6 @@ mod users;
 use std::marker::PhantomData;
 
 use axum::{
-    async_trait,
     extract::{rejection::JsonRejection, FromRequest, FromRequestParts, Request},
     http::request::Parts,
     Json, RequestPartsExt,
@@ -28,7 +27,6 @@ pub use users::*;
 #[derive(Debug, Clone, Copy, Default)]
 pub struct ValidatedJson<T>(pub T);
 
-#[async_trait]
 impl<T, S> FromRequest<S> for ValidatedJson<T>
 where
     T: DeserializeOwned + Validate<Context = ()>,
@@ -61,7 +59,6 @@ where
     }
 }
 
-#[async_trait]
 impl<T> FromRequestParts<AppState> for AuthorizedClaims<T>
 where
     T: Authentication + Authorization,

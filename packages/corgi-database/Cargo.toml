@@ -8,8 +8,8 @@ license.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sea-orm = { version = "1.1.1", features = ["runtime-tokio", "sqlx-all"] }
-sea-orm-migration = { version = "1.1.1", features = [
+sea-orm = { version = "1.1.3", features = ["runtime-tokio", "sqlx-all"] }
+sea-orm-migration = { version = "1.1.3", features = [
   # Enable at least one `ASYNC_RUNTIME` and `DATABASE_DRIVER` feature if you want to run migration via CLI.
   # View the list of supported features at https://www.sea-ql.org/SeaORM/docs/install-and-config/database-and-async-runtime.
   "runtime-tokio",
