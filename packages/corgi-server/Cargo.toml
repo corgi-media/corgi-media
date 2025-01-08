@@ -20,3 +20,4 @@ utoipa-swagger-ui = { version = "8.1.1", features = ["axum"] }
 serde = { version = "1.0.217", features = ["derive"] }
 thiserror = "2.0.9"
 garde = { version = "0.21.0", features = ["full"] }
+sysinfo = "0.33.1"

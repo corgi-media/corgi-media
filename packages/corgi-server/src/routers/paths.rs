@@ -8,6 +8,7 @@ impl Paths {
 impl Paths {
     pub const SYSTEM_PING: &'static str = "/system/ping";
     pub const SYSTEM_STATUS: &'static str = "/system/status";
+    pub const SYSTEM_INFO: &'static str = "/system/info";
 }
 
 impl Paths {

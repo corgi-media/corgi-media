@@ -7,4 +7,5 @@ pub fn route() -> OpenApiRouter<AppState> {
     OpenApiRouter::new()
         .routes(routes!(system::status))
         .routes(routes!(system::ping))
+        .routes(routes!(system::info))
 }
