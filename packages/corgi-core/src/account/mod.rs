@@ -1,5 +1,3 @@
-pub mod token;
-
 use uuid::Uuid;
 
 use corgi_database::{
@@ -8,22 +6,21 @@ use corgi_database::{
 };
 
 use crate::{
-    security::password,
-    users::{self, UserIdentity},
+    auth::password,
+    users::{self, check_account_conflict, UserIdentity},
 };
 
 pub async fn create(
     db: &DatabaseConnection,
     name: String,
     username: String,
+    email: String,
     password: String,
 ) -> Result<user::Model, crate::error::Error> {
     let is_empty = users::is_table_empty(db).await?;
 
     if !is_empty {
-        if let Some(existed) = users::find_option_by_username(db, &username).await? {
-            return Err(crate::error::Error::UserConflict(existed.username));
-        }
+        check_account_conflict(db, &username, &email).await?;
     }
 
     let identity = if is_empty {
@@ -38,6 +35,7 @@ pub async fn create(
         id: Set(Uuid::now_v7()),
         name: Set(name),
         username: Set(username),
+        email: Set(email),
         password: Set(hashed_password),
         identity: Set(identity.into()),
         ..Default::default()

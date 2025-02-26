@@ -2,7 +2,7 @@ pub mod token;
 
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
-use corgi_core::{account, security::authentication::UserAuthentication};
+use corgi_core::{account, auth::authentication::UserAuthentication};
 
 use crate::{
     dto::{
@@ -33,6 +33,7 @@ pub async fn create(
         state.database_connection(),
         payload.name,
         payload.username,
+        payload.email,
         payload.password,
     )
     .await?

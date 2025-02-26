@@ -6,12 +6,12 @@ use uuid::Uuid;
 use corgi_database::{
     entities::user,
     orm::{
-        ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter,
-        QuerySelect, Set,
+        ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DbErr, EntityTrait,
+        QueryFilter, QuerySelect, Set,
     },
 };
 
-use crate::security::password;
+use crate::auth::password;
 
 #[derive(Default, Deserialize, Serialize, Debug, ToSchema, PartialEq)]
 pub enum UserIdentity {
@@ -43,7 +43,7 @@ pub async fn is_table_empty(db: &DatabaseConnection) -> Result<bool, DbErr> {
     Ok(user::Entity::find().limit(1).all(db).await?.is_empty())
 }
 
-pub async fn find_option_by_id(
+pub async fn find_by_id_option(
     db: &DatabaseConnection,
     id: Uuid,
 ) -> Result<Option<user::Model>, DbErr> {
@@ -54,41 +54,73 @@ pub async fn find_by_id(
     db: &DatabaseConnection,
     id: Uuid,
 ) -> Result<user::Model, crate::error::Error> {
-    find_option_by_id(db, id)
+    find_by_id_option(db, id)
         .await?
         .ok_or(crate::error::Error::UserNotFound)
 }
 
-pub async fn find_option_by_username(
+pub async fn find_by_username_or_email(
     db: &DatabaseConnection,
     username: &str,
+    email: &str,
 ) -> Result<Option<user::Model>, DbErr> {
     user::Entity::find()
-        .filter(user::Column::Username.eq(username))
+        .filter(
+            Condition::any()
+                .add(user::Column::Username.eq(username))
+                .add(user::Column::Email.eq(email)),
+        )
         .one(db)
         .await
 }
 
-pub async fn find_by_username(
+pub async fn find_by_account_option(
     db: &DatabaseConnection,
-    username: &str,
+    account: &str,
+) -> Result<Option<user::Model>, DbErr> {
+    user::Entity::find()
+        .filter(
+            Condition::any()
+                .add(user::Column::Email.eq(account))
+                .add(user::Column::Username.eq(account)),
+        )
+        .one(db)
+        .await
+}
+
+pub async fn find_by_account(
+    db: &DatabaseConnection,
+    account: &str,
 ) -> Result<user::Model, crate::error::Error> {
-    find_option_by_username(db, username)
+    find_by_account_option(db, account)
         .await?
         .ok_or(crate::error::Error::UserNotFound)
+}
+
+pub async fn check_account_conflict(
+    db: &DatabaseConnection,
+    username: &str,
+    email: &str,
+) -> Result<(), crate::error::Error> {
+    if let Some(existed) = find_by_username_or_email(db, username, email).await? {
+        if existed.email == email {
+            return Err(crate::error::Error::EmailConflict(existed.username));
+        }
+        return Err(crate::error::Error::UsernameConflict(existed.username));
+    }
+    Ok(())
 }
 
 pub async fn create(
     db: &DatabaseConnection,
     name: String,
     username: String,
+    email: String,
     password: String,
     identity: UserIdentity,
     birthday: Option<NaiveDate>,
 ) -> Result<user::Model, crate::error::Error> {
-    if let Some(existed) = find_option_by_username(db, &username).await? {
-        return Err(crate::error::Error::UserConflict(existed.username));
-    }
+    check_account_conflict(db, &username, &email).await?;
 
     let hashed_password = password::hash(password)?;
 
@@ -96,6 +128,7 @@ pub async fn create(
         id: Set(Uuid::now_v7()),
         name: Set(name),
         username: Set(username),
+        email: Set(email),
         password: Set(hashed_password),
         identity: Set(identity.into()),
         birthday: Set(birthday),

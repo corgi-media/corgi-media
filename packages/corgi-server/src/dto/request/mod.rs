@@ -16,8 +16,8 @@ use garde::Validate;
 use serde::de::DeserializeOwned;
 
 use corgi_core::{
+    auth::{authentication::Authentication, authorization::Authorization, jwt::Claims},
     entities::user,
-    security::{authentication::Authentication, authorization::Authorization, jwt::Claims},
 };
 
 use crate::state::AppState;
@@ -78,7 +78,7 @@ where
 
         let user = T::authenticate(state.database_connection(), &claims).await?;
 
-        T::authorize(&claims, &user).map_err(corgi_core::error::Error::Authorization)?;
+        T::authorize(&user).map_err(corgi_core::error::Error::Authorization)?;
 
         Ok(AuthorizedClaims::new(user))
     }

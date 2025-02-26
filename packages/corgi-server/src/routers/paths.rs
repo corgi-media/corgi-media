@@ -13,7 +13,10 @@ impl Paths {
 
 impl Paths {
     pub const ACCOUNT: &'static str = "/account";
-    pub const ACCOUNT_TOKEN: &'static str = "/account/token";
+}
+
+impl Paths {
+    pub const AUTHENTICATION_ENDPOINTS_PASSWORD: &'static str = "/auth/endpoints/password";
 }
 
 impl Paths {

@@ -7,7 +7,7 @@ use ed25519_dalek::{
     },
     SigningKey, VerifyingKey,
 };
-use rand::rngs::OsRng;
+use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 

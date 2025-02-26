@@ -3,32 +3,22 @@ use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
-pub enum Audience {
-    User,
-    ApiKey,
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    pub aud: Audience,
     pub exp: i64,
     pub iat: i64,
-    pub iss: Uuid,
-    pub sub: String,
+    pub sub: Uuid,
 }
 
 impl Claims {
-    pub fn new(audience: Audience, issuer: Uuid, subject: String, valid_days: i32) -> Self {
+    pub fn new(subject: Uuid, valid_days: i32) -> Self {
         let now = Utc::now();
         let exp = now + Duration::days(valid_days.into());
 
         Self {
-            aud: audience,
             exp: exp.timestamp(),
             iat: now.timestamp(),
             sub: subject,
-            iss: issuer,
         }
     }
 }

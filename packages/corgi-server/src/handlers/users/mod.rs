@@ -1,6 +1,6 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
-use corgi_core::{security::authentication::AdminAuthentication, users};
+use corgi_core::{auth::authentication::AdminAuthentication, users};
 
 use crate::{
     dto::{
@@ -36,6 +36,7 @@ pub async fn create(
         state.database_connection(),
         payload.name,
         payload.username,
+        payload.email,
         payload.password,
         payload.identity.into(),
         payload.birthday,

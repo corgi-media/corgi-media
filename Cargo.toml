@@ -8,3 +8,9 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Corgi.Media"]
 license = "GPL-3.0"
+
+[workspace.dependencies]
+tokio = { version = "1.43.0", features = ["full"] }
+serde = { version = "1.0.218", features = ["derive"] }
+utoipa = { version = "5.3.1", features = ["axum_extras", "uuid", "chrono"] }
+thiserror = "2.0.11"

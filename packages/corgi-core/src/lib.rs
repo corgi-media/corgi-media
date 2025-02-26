@@ -1,7 +1,7 @@
 pub mod account;
+pub mod auth;
 pub mod config;
 pub mod error;
-pub mod security;
 pub mod tracing;
 pub mod users;
 

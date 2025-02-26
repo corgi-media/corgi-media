@@ -14,11 +14,10 @@ impl MigrationTrait for Migration {
                     .col(pk_uuid(User::Id))
                     .col(string_len(User::Name, 64))
                     .col(string_len_uniq(User::Username, 64))
+                    .col(string_len_uniq(User::Email, 254))
                     .col(string_len(User::Password, 128))
                     .col(integer(User::Identity).default(1).take())
                     .col(date_null(User::Birthday))
-                    .col(timestamp_null(User::LastLoginAt))
-                    .col(timestamp_null(User::LastActivityAt))
                     .col(timestamp_null(User::LockedUntil))
                     .col(boolean(User::Disabled).default(false).take())
                     .col(timestamp_null(User::DisabledAt))
@@ -40,11 +39,10 @@ enum User {
     Id,
     Name,
     Username,
+    Email,
     Password,
     Identity,
     Birthday,
-    LastLoginAt,
-    LastActivityAt,
     LockedUntil,
     Disabled,
     DisabledAt,

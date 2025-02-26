@@ -22,3 +22,5 @@ pub fn verify(
 
     argon2.verify_password(password.as_ref().as_bytes(), &parsed_hash)
 }
+
+pub fn auth() {}

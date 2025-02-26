@@ -20,7 +20,7 @@ pub struct SystemInfo {
     host_name: Option<String>,
     os: Option<String>,
     os_version: Option<String>,
-    cpu_arch: String,
+    arch: String,
 }
 
 #[utoipa::path(
@@ -68,6 +68,6 @@ pub async fn info(State(state): State<AppState>) -> Json<SystemInfo> {
         host_name: System::host_name(),
         os: System::name(),
         os_version: System::os_version(),
-        cpu_arch: System::cpu_arch(),
+        arch: System::cpu_arch(),
     })
 }

@@ -1,24 +1,20 @@
 use corgi_database::orm::DatabaseConnection;
 
-use crate::{
-    security::{
-        jwt::{Audience, Claims},
-        password,
-    },
-    users,
-};
+use crate::users;
 
-pub async fn create(
+use super::{jwt::Claims, password};
+
+pub async fn auth_password(
     db: &DatabaseConnection,
     privite_key: &str,
-    username: String,
+    account: String,
     password: String,
 ) -> Result<String, crate::error::Error> {
-    let user = users::find_by_username(db, &username).await?;
+    let user = users::find_by_account(db, &account).await?;
 
     password::verify(&password, &user.password)?;
 
-    let claims = Claims::new(Audience::User, user.id, user.username, 30);
+    let claims = Claims::new(user.id, 30);
 
     let access_token = claims.encode(privite_key)?;
 

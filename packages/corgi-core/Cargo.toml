@@ -10,16 +10,16 @@ license.workspace = true
 [dependencies]
 corgi-database = { path = "../corgi-database" }
 
+serde = { workspace = true }
+utoipa = { workspace = true }
+thiserror = { workspace = true }
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 tracing = "0.1.41"
-serde = { version = "1.0.217", features = ["derive"] }
 toml = "0.8.19"
-utoipa = { version = "5.3.1", features = ["uuid", "chrono"] }
 uuid = { version = "1.11.0", features = ["v7"] }
 chrono = "0.4.39"
 argon2 = "0.5.3"
-thiserror = "2.0.9"
 tokio = "1.42.0"
 jsonwebtoken = "9.3.0"
-rand = "0.8.5"
+rand_core = "0.6.4"
 ed25519-dalek = { version = "2.1.1", features = ["pkcs8", "rand_core"] }

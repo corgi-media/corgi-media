@@ -9,8 +9,11 @@ pub enum Error {
     #[error("{0}")]
     Password(String),
 
+    #[error("Email `{0}` is already taken")]
+    EmailConflict(String),
+
     #[error("Username `{0}` is already taken")]
-    UserConflict(String),
+    UsernameConflict(String),
 
     #[error("User not found")]
     UserNotFound,
@@ -19,7 +22,7 @@ pub enum Error {
     JWT(#[from] jsonwebtoken::errors::Error),
 
     #[error(transparent)]
-    Authorization(#[from] crate::security::authorization::Error),
+    Authorization(#[from] crate::auth::authorization::Error),
 }
 
 impl From<argon2::password_hash::Error> for Error {

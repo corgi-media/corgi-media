@@ -65,7 +65,12 @@ impl ErrorResponse {
                 "AUTHENTICATION_FAILED",
                 "Wrong user credentials".to_string(),
             ),
-            CoreError::UserConflict(_) => (StatusCode::CONFLICT, "USER_CONFLICT", self.to_string()),
+            CoreError::EmailConflict(_) => {
+                (StatusCode::CONFLICT, "EMAIL_CONFLICT", self.to_string())
+            }
+            CoreError::UsernameConflict(_) => {
+                (StatusCode::CONFLICT, "USERNAME_CONFLICT", self.to_string())
+            }
             CoreError::JWT(_) => (StatusCode::UNAUTHORIZED, "JWT_ERROR", self.to_string()),
             CoreError::Authorization(_) => (
                 StatusCode::FORBIDDEN,

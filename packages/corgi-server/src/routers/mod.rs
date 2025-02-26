@@ -1,5 +1,6 @@
 mod account;
 mod api_docs;
+mod auth;
 mod paths;
 mod system;
 mod users;
@@ -19,6 +20,7 @@ impl AppRouter {
         let (router, api) = OpenApiRouter::with_openapi(openapi::Docs::openapi())
             .merge(system::route())
             .merge(account::route())
+            .merge(auth::route())
             .merge(users::route())
             .split_for_parts();
 
