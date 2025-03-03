@@ -18,6 +18,7 @@ use serde::de::DeserializeOwned;
 use corgi_core::{
     auth::{authentication::Authentication, authorization::Authorization, jwt::Claims},
     entities::user,
+    error::Error as CoreError,
 };
 
 use crate::state::AppState;
@@ -33,7 +34,7 @@ where
     S: Send + Sync,
     Json<T>: FromRequest<S, Rejection = JsonRejection>,
 {
-    type Rejection = super::ErrorResponse;
+    type Rejection = crate::error::Error;
 
     async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
         let Json(value) = Json::<T>::from_request(req, state).await?;
@@ -63,7 +64,7 @@ impl<T> FromRequestParts<AppState> for AuthorizedClaims<T>
 where
     T: Authentication + Authorization,
 {
-    type Rejection = super::ErrorResponse;
+    type Rejection = crate::error::Error;
 
     async fn from_request_parts(
         parts: &mut Parts,
@@ -73,12 +74,12 @@ where
             .extract::<TypedHeader<AuthorizationHeader<Bearer>>>()
             .await?;
 
-        let claims = Claims::decode(bearer.token(), &state.keyring().public_key)
-            .map_err(corgi_core::error::Error::JWT)?;
+        let claims =
+            Claims::decode(bearer.token(), &state.keyring().public_key).map_err(CoreError::JWT)?;
 
         let user = T::authenticate(state.database_connection(), &claims).await?;
 
-        T::authorize(&user).map_err(corgi_core::error::Error::Authorization)?;
+        T::authorize(&user).map_err(CoreError::Authorization)?;
 
         Ok(AuthorizedClaims::new(user))
     }

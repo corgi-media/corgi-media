@@ -1,4 +1,5 @@
 mod dto;
+mod error;
 mod handlers;
 mod openapi;
 mod routers;
