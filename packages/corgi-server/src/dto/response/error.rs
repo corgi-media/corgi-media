@@ -2,10 +2,10 @@ use axum::{
     response::{IntoResponse, Response},
     Json,
 };
-
-use corgi_core::error::IntoHttpError;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+
+use corgi_core::error::IntoHttpError;
 
 use crate::error::Error;
 
