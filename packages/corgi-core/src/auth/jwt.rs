@@ -1,4 +1,3 @@
-use chrono::{Duration, Utc};
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -8,19 +7,7 @@ pub struct Claims {
     pub exp: i64,
     pub iat: i64,
     pub sub: Uuid,
-}
-
-impl Claims {
-    pub fn new(subject: Uuid, valid_days: i32) -> Self {
-        let now = Utc::now();
-        let exp = now + Duration::days(valid_days.into());
-
-        Self {
-            exp: exp.timestamp(),
-            iat: now.timestamp(),
-            sub: subject,
-        }
-    }
+    pub jti: Uuid,
 }
 
 impl Claims {
