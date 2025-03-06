@@ -22,13 +22,26 @@ pub enum LibraryCategory {
 #[derive(Debug, Clone, Serialize, ToSchema)]
 pub struct Library {
     pub id: Uuid,
+
+    #[schema(example = "Movies")]
     pub name: String,
+
+    #[schema(example = "Movie")]
     pub category: LibraryCategory,
+
+    #[schema(example = "zh")]
     pub language: String,
+
+    #[schema(example = "CN")]
     pub region: String,
+
+    #[schema(example = "[\"media.corgi.TMDB\"]")]
     pub metadata_providers: Vec<String>,
+
     pub scanned_at: Option<DateTime<Utc>>,
+
     pub created_at: DateTime<Utc>,
+
     pub updated_at: DateTime<Utc>,
 }
 

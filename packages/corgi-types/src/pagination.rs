@@ -4,8 +4,11 @@ use utoipa::{IntoParams, ToSchema};
 #[derive(Debug, Clone, Serialize, ToSchema)]
 pub struct Paginated<T> {
     pub items: Vec<T>,
+    #[schema(example = 0)]
     pub count: u64,
+    #[schema(example = 0)]
     pub limit: u64,
+    #[schema(example = 0)]
     pub offset: u64,
 }
 
