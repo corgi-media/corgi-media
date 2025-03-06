@@ -8,13 +8,11 @@ use ed25519_dalek::{
     SigningKey, VerifyingKey,
 };
 use rand_core::OsRng;
-use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
 
 const ID_ED25519: &str = "id_ed25519";
 const ID_ED25519_PUB: &str = "id_ed25519.pub";
 
-#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct Keyring {
     pub privite_key: String,
     pub public_key: String,

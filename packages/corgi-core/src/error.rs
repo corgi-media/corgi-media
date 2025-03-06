@@ -22,6 +22,9 @@ pub enum Error {
 
     #[error(transparent)]
     Authorization(#[from] crate::auth::authorization::Error),
+
+    #[error("{0} not found")]
+    NotFound(&'static str),
 }
 
 impl From<argon2::password_hash::Error> for Error {
@@ -74,6 +77,11 @@ impl IntoHttpError for Error {
             Error::Authorization(_) => HttpError {
                 status_code: StatusCode::FORBIDDEN,
                 kind: "AUTHORIZATION_ERROR",
+                message: self.to_string(),
+            },
+            Error::NotFound(_) => HttpError {
+                status_code: StatusCode::NOT_FOUND,
+                kind: "NOT_FOUND",
                 message: self.to_string(),
             },
         }

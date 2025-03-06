@@ -12,7 +12,7 @@ pub struct Model {
     pub category: String,
     pub language: String,
     pub region: String,
-    pub metadata_provider: Option<String>,
+    pub metadata_providers: Json,
     pub scanned_at: Option<DateTimeUtc>,
     pub created_at: DateTimeUtc,
     pub updated_at: DateTimeUtc,

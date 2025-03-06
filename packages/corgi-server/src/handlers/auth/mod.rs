@@ -1,9 +1,12 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
-use corgi_core::auth;
+use corgi_core::{
+    auth,
+    types::{PasswordSignInPayload, Token},
+};
 
 use crate::{
-    dto::{ErrorResponseBody, PasswordSignInRequest, ResponseResult, Token, ValidatedJson},
+    dto::{ErrorResponse, ResponseResult, ValidatedJson},
     openapi::Tags,
     routers::Paths,
     state::AppState,
@@ -11,19 +14,19 @@ use crate::{
 
 #[utoipa::path(
     post,
-    request_body = PasswordSignInRequest,
+    request_body = PasswordSignInPayload,
     path = Paths::AUTHENTICATION_ENDPOINTS_PASSWORD,
     tag = Tags::AUTHENTICATION,
     operation_id = "auth_endpoints_password",
     responses(
         (status = CREATED, description = "Sign In (use account and password)", body = Token),
-        (status = UNAUTHORIZED, description = "Wrong user credentials", body = ErrorResponseBody),
-        (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponseBody),
+        (status = UNAUTHORIZED, description = "Wrong user credentials", body = ErrorResponse),
+        (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponse),
     )
 )]
 pub async fn endpoints_password(
     State(state): State<AppState>,
-    ValidatedJson(payload): ValidatedJson<PasswordSignInRequest>,
+    ValidatedJson(payload): ValidatedJson<PasswordSignInPayload>,
 ) -> ResponseResult<impl IntoResponse> {
     let access_token = auth::sessions::auth_password(
         state.database_connection(),

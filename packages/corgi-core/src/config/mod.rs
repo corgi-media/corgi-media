@@ -3,13 +3,10 @@ mod server;
 
 use std::{fs, path::Path};
 
-use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
-
 pub use crypto::Keyring;
 pub use server::ServerConfig;
 
-#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct AppConfig {
     pub identifier: uuid::Uuid,
     pub server: ServerConfig,

@@ -1,0 +1,19 @@
+[package]
+name = "corgi-types"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+corgi-database = { path = "../corgi-database" }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+utoipa = { workspace = true }
+garde = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+strum = { workspace = true }

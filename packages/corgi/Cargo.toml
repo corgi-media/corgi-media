@@ -8,8 +8,8 @@ license.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-corgi-core = { path = "../corgi-core" }
-corgi-server = { path = "../corgi-server" }
+corgi-core = { workspace = true }
+corgi-server = { workspace = true }
 
 clap = { version = "4.5.23", features = ["derive"] }
 tokio = { workspace = true }

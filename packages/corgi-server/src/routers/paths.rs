@@ -22,3 +22,8 @@ impl Paths {
 impl Paths {
     pub const USERS: &'static str = "/users";
 }
+
+impl Paths {
+    pub const LIBRARIES: &'static str = "/libraries";
+    pub const LIBRARIES_ID: &'static str = "/libraries/{id}";
+}

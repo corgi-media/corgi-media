@@ -16,7 +16,7 @@ impl MigrationTrait for Migration {
                     .col(string_len(Library::Category, 32))
                     .col(string_len(Library::Language, 2))
                     .col(string_len(Library::Region, 2))
-                    .col(string_len_null(Library::MetadataProvider, 64))
+                    .col(json(Library::MetadataProviders))
                     .col(timestamp_null(Library::ScannedAt))
                     .to_owned(),
             ))
@@ -40,6 +40,6 @@ pub enum Library {
     Language,
     // ISO 3166-1 alpha-2
     Region,
-    MetadataProvider,
+    MetadataProviders,
     ScannedAt,
 }

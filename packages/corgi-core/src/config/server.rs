@@ -1,9 +1,6 @@
 use std::{net::IpAddr, path::PathBuf, str::FromStr};
 
-use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
-
-#[derive(Serialize, Deserialize, ToSchema, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct ServerConfig {
     pub host: String,
     pub port: u16,

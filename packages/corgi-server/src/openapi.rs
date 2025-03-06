@@ -31,4 +31,5 @@ impl Tags {
     pub const ACCOUNT: &'static str = "Account";
     pub const AUTHENTICATION: &'static str = "Authentication";
     pub const USERS: &'static str = "Users";
+    pub const LIBRARIES: &'static str = "Libraries";
 }

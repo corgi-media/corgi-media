@@ -4,23 +4,21 @@ use corgi_database::{
     entities::user,
     orm::{ActiveModelTrait, DatabaseConnection, Set},
 };
+use corgi_types::{SignUpPayload, UserIdentity};
 
 use crate::{
     auth::password,
-    users::{self, check_account_conflict, UserIdentity},
+    users::{self, check_account_conflict},
 };
 
 pub async fn create(
     db: &DatabaseConnection,
-    name: String,
-    username: String,
-    email: String,
-    password: String,
+    payload: SignUpPayload,
 ) -> Result<user::Model, crate::error::Error> {
     let is_empty = users::is_table_empty(db).await?;
 
     if !is_empty {
-        check_account_conflict(db, &username, &email).await?;
+        check_account_conflict(db, &payload.username, &payload.email).await?;
     }
 
     let identity = if is_empty {
@@ -29,13 +27,13 @@ pub async fn create(
         UserIdentity::Normal
     };
 
-    let hashed_password = password::hash(password)?;
+    let hashed_password = password::hash(payload.password)?;
 
     let new_user = user::ActiveModel {
         id: Set(Uuid::now_v7()),
-        name: Set(name),
-        username: Set(username),
-        email: Set(email),
+        name: Set(payload.name),
+        username: Set(payload.username),
+        email: Set(payload.email),
         password: Set(hashed_password),
         identity: Set(identity.into()),
         ..Default::default()

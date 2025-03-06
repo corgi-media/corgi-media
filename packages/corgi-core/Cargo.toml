@@ -8,19 +8,19 @@ license.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-corgi-database = { path = "../corgi-database" }
+corgi-database = { workspace = true }
+corgi-types = { workspace = true }
 
 serde = { workspace = true }
-utoipa = { workspace = true }
 thiserror = { workspace = true }
-tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-tracing = "0.1.41"
-toml = "0.8.19"
-uuid = { version = "1.11.0", features = ["v7"] }
-chrono = "0.4.39"
-argon2 = "0.5.3"
-tokio = "1.42.0"
-jsonwebtoken = "9.3.0"
-rand_core = "0.6.4"
-ed25519-dalek = { version = "2.1.1", features = ["pkcs8", "rand_core"] }
+tracing-subscriber = { workspace = true }
+tracing = { workspace = true }
+toml = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+argon2 = { workspace = true }
+tokio = { workspace = true }
+jsonwebtoken = { workspace = true }
+rand_core = { workspace = true }
+ed25519-dalek = { workspace = true }
 http = { workspace = true }

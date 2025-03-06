@@ -1,6 +1,3 @@
-use chrono::NaiveDate;
-use serde::{Deserialize, Serialize};
-use utoipa::ToSchema;
 use uuid::Uuid;
 
 use corgi_database::{
@@ -10,34 +7,9 @@ use corgi_database::{
         QueryFilter, QuerySelect, Set,
     },
 };
+use corgi_types::CreateUserPayload;
 
 use crate::auth::password;
-
-#[derive(Default, Deserialize, Serialize, Debug, ToSchema, PartialEq)]
-pub enum UserIdentity {
-    Administrator = 0,
-
-    #[default]
-    Normal = 1,
-}
-
-impl From<i32> for UserIdentity {
-    fn from(value: i32) -> Self {
-        match value {
-            0 => Self::Administrator,
-            _ => Self::Normal,
-        }
-    }
-}
-
-impl From<UserIdentity> for i32 {
-    fn from(value: UserIdentity) -> Self {
-        match value {
-            UserIdentity::Administrator => 0,
-            UserIdentity::Normal => 1,
-        }
-    }
-}
 
 pub async fn is_table_empty(db: &DatabaseConnection) -> Result<bool, DbErr> {
     Ok(user::Entity::find().limit(1).all(db).await?.is_empty())
@@ -116,29 +88,24 @@ pub async fn check_account_conflict(
 
 pub async fn create(
     db: &DatabaseConnection,
-    name: String,
-    username: String,
-    email: String,
-    password: String,
-    identity: UserIdentity,
-    birthday: Option<NaiveDate>,
+    payload: CreateUserPayload,
 ) -> Result<user::Model, crate::error::Error> {
-    check_account_conflict(db, &username, &email).await?;
+    check_account_conflict(db, &payload.username, &payload.email).await?;
 
-    let hashed_password = password::hash(password)?;
+    let hashed_password = password::hash(payload.password)?;
 
-    let new_user = user::ActiveModel {
+    let model = user::ActiveModel {
         id: Set(Uuid::now_v7()),
-        name: Set(name),
-        username: Set(username),
-        email: Set(email),
+        name: Set(payload.name),
+        username: Set(payload.username),
+        email: Set(payload.email),
         password: Set(hashed_password),
-        identity: Set(identity.into()),
-        birthday: Set(birthday),
+        identity: Set(payload.identity),
+        birthday: Set(payload.birthday),
         ..Default::default()
     }
     .insert(db)
     .await?;
 
-    Ok(new_user)
+    Ok(model)
 }

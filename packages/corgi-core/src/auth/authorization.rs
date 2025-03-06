@@ -1,6 +1,5 @@
 use corgi_database::entities::user;
-
-use crate::users::UserIdentity;
+use corgi_types::UserIdentity;
 
 use super::authentication::{AdminAuthentication, UserAuthentication};
 

@@ -1,11 +1,13 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
-use corgi_core::{auth::authentication::AdminAuthentication, users};
+use corgi_core::{
+    auth::authentication::AdminAuthentication,
+    types::{CreateUserPayload, User},
+    users,
+};
 
 use crate::{
-    dto::{
-        AuthorizedClaims, CreateUserRequest, ErrorResponseBody, ResponseResult, User, ValidatedJson,
-    },
+    dto::{AuthorizedClaims, ErrorResponse, ResponseResult, ValidatedJson},
     openapi::Tags,
     routers::Paths,
     state::AppState,
@@ -16,11 +18,11 @@ use crate::{
     path = Paths::USERS,
     tag = Tags::USERS,
     operation_id = "create_user",
-    request_body = CreateUserRequest,
+    request_body = CreateUserPayload,
     responses(
         (status = CREATED, description = "Create a user", body = User),
-        (status = CONFLICT, description = "Username conflicts", body = ErrorResponseBody),
-        (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponseBody),
+        (status = CONFLICT, description = "Username conflicts", body = ErrorResponse),
+        (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponse),
     ),
     security(
         ("JWT" = [])
@@ -29,20 +31,12 @@ use crate::{
 pub async fn create(
     State(state): State<AppState>,
     _: AuthorizedClaims<AdminAuthentication>,
-    ValidatedJson(payload): ValidatedJson<CreateUserRequest>,
+    ValidatedJson(payload): ValidatedJson<CreateUserPayload>,
 ) -> ResponseResult<impl IntoResponse> {
     println!("identity: {:?}", payload.identity);
-    let result: User = users::create(
-        state.database_connection(),
-        payload.name,
-        payload.username,
-        payload.email,
-        payload.password,
-        payload.identity.into(),
-        payload.birthday,
-    )
-    .await?
-    .into();
+    let result: User = users::create(state.database_connection(), payload)
+        .await?
+        .into();
 
     Ok((StatusCode::CREATED, Json(result)))
 }

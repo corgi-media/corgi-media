@@ -1,6 +1,7 @@
 mod account;
 mod api_docs;
 mod auth;
+mod libraries;
 mod paths;
 mod system;
 mod users;
@@ -22,6 +23,7 @@ impl AppRouter {
             .merge(account::route())
             .merge(auth::route())
             .merge(users::route())
+            .merge(libraries::route())
             .split_for_parts();
 
         router.merge(api_docs::route(api))
