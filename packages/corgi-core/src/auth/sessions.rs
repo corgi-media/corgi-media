@@ -1,6 +1,7 @@
 use chrono::{Duration, Utc};
 
 use corgi_database::{entities::user::Model as UserModel, orm::DatabaseConnection};
+use corgi_types::Token;
 
 use super::{jwt::Claims, password};
 use crate::users;
@@ -33,12 +34,12 @@ pub async fn auth_password(
     privite_key: &str,
     account: String,
     password: String,
-) -> Result<String, crate::error::Error> {
+) -> Result<Token, crate::error::Error> {
     let user = users::get_by_account(db, &account).await?;
 
     password::verify(&password, &user.password)?;
 
     let access_token = create(db, privite_key, &user).await?;
 
-    Ok(access_token)
+    Ok(Token { access_token })
 }

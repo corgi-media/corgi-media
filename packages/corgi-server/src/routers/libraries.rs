@@ -5,9 +5,9 @@ use crate::state::AppState;
 
 pub fn route() -> OpenApiRouter<AppState> {
     OpenApiRouter::new()
-        .routes(routes!(libraries::create, libraries::query))
+        .routes(routes!(libraries::create, libraries::list))
         .routes(routes!(
-            libraries::find,
+            libraries::get,
             libraries::update,
             libraries::delete
         ))

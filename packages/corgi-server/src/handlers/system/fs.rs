@@ -20,9 +20,10 @@ pub struct PathQuery {
   path = Paths::SYSTEM_FS_DIRECTORIES,
   tag = Tags::SYSTEM,
   operation_id = "list_directories",
+  summary = "List directories",
   params(PathQuery),
   responses(
-      (status = OK, description = "List directories", body = Vec<FileEntry>)
+      (status = OK, body = Vec<FileEntry>)
   ),
   security(
     ("JWT" = [])
@@ -42,9 +43,10 @@ pub async fn directories(
   path = Paths::SYSTEM_FS_FILES,
   tag = Tags::SYSTEM,
   operation_id = "list_files",
+  summary = "List files",
   params(PathQuery),
   responses(
-      (status = OK, description = "List files", body = Vec<FileEntry>)
+      (status = OK, body = Vec<FileEntry>)
   ),
   security(
     ("JWT" = [])

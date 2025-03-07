@@ -1,5 +1,3 @@
-pub mod token;
-
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
 use corgi_core::{
@@ -20,10 +18,11 @@ use crate::{
     path = Paths::ACCOUNT,
     tag = Tags::ACCOUNT,
     operation_id = "sign_up",
+    summary = "Sign Up",
     request_body = SignUpPayload,
     responses(
-        (status = CREATED, description = "Create a account (Sign Up)", body = User),
-        (status = CONFLICT, description = "Username conflicts", body = ErrorResponse),
+        (status = CREATED, body = User),
+        (status = CONFLICT, description = "User duplicated", body = ErrorResponse),
         (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponse),
     )
 )]
@@ -43,8 +42,9 @@ pub async fn create(
     path = Paths::ACCOUNT,
     tag = Tags::ACCOUNT,
     operation_id = "account_information",
+    summary = "Get account information",
     responses(
-        (status = OK, description = "Get account information", body = User),
+        (status = OK, body = User),
         (status = UNAUTHORIZED, description = "Unauthorized", body = ErrorResponse),
         (status = FORBIDDEN, description = "Forbidden", body = ErrorResponse),
     ),

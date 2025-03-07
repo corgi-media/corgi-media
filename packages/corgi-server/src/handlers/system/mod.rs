@@ -30,8 +30,9 @@ pub struct SystemInfo {
     path = Paths::SYSTEM_PING,
     tag = Tags::SYSTEM,
     operation_id = "system_ping",
+    summary = "Ping the system",
     responses(
-        (status = OK, description = "Ping the system")
+        (status = OK, body = String)
     )
 )]
 pub async fn ping() -> &'static str {
@@ -43,8 +44,9 @@ pub async fn ping() -> &'static str {
     path = Paths::SYSTEM_STATUS,
     tag = Tags::SYSTEM,
     operation_id = "system_status",
+    summary = "Get the status of the system",
     responses(
-        (status = OK, description = "Get the status of the system", body = SystemStatus)
+        (status = OK, body = SystemStatus)
     )
 )]
 pub async fn status(State(state): State<AppState>) -> Json<SystemStatus> {
@@ -58,8 +60,9 @@ pub async fn status(State(state): State<AppState>) -> Json<SystemStatus> {
     path = Paths::SYSTEM_INFO,
     tag = Tags::SYSTEM,
     operation_id = "system_info",
+    summary = "Get the information of the system",
     responses(
-        (status = OK, description = "Get the information of the system", body = SystemInfo)
+        (status = OK, body = SystemInfo)
     )
 )]
 pub async fn info(State(state): State<AppState>) -> Json<SystemInfo> {

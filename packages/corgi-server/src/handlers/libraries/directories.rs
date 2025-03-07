@@ -24,7 +24,7 @@ use crate::{
     path = Paths::LIBRARIES_DIRECTORIES,
     tag = Tags::LIBRARIES,
     operation_id = "add_library_directory",
-    summary = "Add directory to library",
+    summary = "Add a directory to library",
     params(
         ("library_id" = Uuid, Path, description = "Library ID"),
     ),
@@ -86,7 +86,7 @@ pub async fn list(
     path = Paths::LIBRARIES_DIRECTORIES_ID,
     tag = Tags::LIBRARIES,
     operation_id = "update_library_directory",
-    summary = "Update library directory",
+    summary = "Update a library directory",
     params(
         ("library_id" = Uuid, Path, description = "Library ID"),
         ("id" = i32, Path, description = "Directory ID"),
@@ -120,7 +120,7 @@ pub async fn update(
     path = Paths::LIBRARIES_DIRECTORIES_ID,
     tag = Tags::LIBRARIES,
     operation_id = "delete_library_directory",
-    summary = "Delete library directory",
+    summary = "Delete a library directory",
     params(
         ("library_id" = Uuid, Path, description = "Library ID"),
         ("id" = i32, Path, description = "Directory ID"),

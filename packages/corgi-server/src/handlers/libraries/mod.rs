@@ -27,9 +27,10 @@ use crate::{
     path = Paths::LIBRARIES,
     tag = Tags::LIBRARIES,
     operation_id = "create_library",
+    summary = "Create a library",
     request_body = LibraryPayload,
     responses(
-        (status = CREATED, description = "Create a library", body = Library),
+        (status = CREATED, body = Library),
         (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponse),
     ),
     security(
@@ -52,19 +53,19 @@ pub async fn create(
     get,
     path = Paths::LIBRARIES,
     tag = Tags::LIBRARIES,
-    operation_id = "query_library",
+    operation_id = "list_libraries",
+    summary = "List libraries",
     params(
         Pagination,
     ),
     responses(
-        (status = OK, description = "Query libraries", body = Paginated<Library>),
-        (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponse),
+        (status = OK, body = Paginated<Library>),
     ),
     security(
         ("JWT" = [])
     )
 )]
-pub async fn query(
+pub async fn list(
     State(state): State<AppState>,
     _: AuthorizedClaims<UserAuthentication>,
     Query(pagination): Query<Pagination>,
@@ -83,18 +84,19 @@ pub async fn query(
     path = Paths::LIBRARIES_ID,
     tag = Tags::LIBRARIES,
     operation_id = "library_info",
+    summary = "Get a library",
     params(
         ("id" = Uuid, Path, description = "Library ID"),
     ),
     responses(
-        (status = OK, description = "Get library information", body = Library),
+        (status = OK, body = Library),
         (status = NOT_FOUND, description = "Library not found", body = ErrorResponse),
     ),
     security(
         ("JWT" = [])
     )
 )]
-pub async fn find(
+pub async fn get(
     State(state): State<AppState>,
     _: AuthorizedClaims<UserAuthentication>,
     Path(id): Path<Uuid>,
@@ -111,12 +113,13 @@ pub async fn find(
     path = Paths::LIBRARIES_ID,
     tag = Tags::LIBRARIES,
     operation_id = "update_library",
+    summary = "Update a library",
     params(
         ("id" = Uuid, Path, description = "Library ID"),
     ),
     request_body = LibraryPayload,
     responses(
-        (status = OK, description = "Update library", body = Library),
+        (status = OK, body = Library),
         (status = NOT_FOUND, description = "Library not found", body = ErrorResponse),
         (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponse),
     ),
@@ -142,11 +145,12 @@ pub async fn update(
     path = Paths::LIBRARIES_ID,
     tag = Tags::LIBRARIES,
     operation_id = "delete_library",
+    summary = "Delete a library",
     params(
         ("id" = Uuid, Path, description = "Library ID"),
     ),
     responses(
-        (status = OK, description = "Delete library"),
+        (status = OK),
     ),
     security(
         ("JWT" = [])

@@ -18,10 +18,11 @@ use crate::{
     path = Paths::USERS,
     tag = Tags::USERS,
     operation_id = "create_user",
+    summary = "Create a user",
     request_body = CreateUserPayload,
     responses(
-        (status = CREATED, description = "Create a user", body = User),
-        (status = CONFLICT, description = "Username conflicts", body = ErrorResponse),
+        (status = CREATED, body = User),
+        (status = CONFLICT, description = "User duplicated", body = ErrorResponse),
         (status = UNPROCESSABLE_ENTITY, description = "Validation failed", body = ErrorResponse),
     ),
     security(
