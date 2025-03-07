@@ -1,3 +1,5 @@
+pub mod directories;
+
 use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
@@ -73,7 +75,7 @@ pub async fn query(
 
     let result: Paginated<Library> = result.into();
 
-    Ok((StatusCode::OK, Json(result)))
+    Ok(Json(result))
 }
 
 #[utoipa::path(
@@ -101,7 +103,7 @@ pub async fn find(
         .await?
         .into();
 
-    Ok((StatusCode::OK, Json(result)))
+    Ok(Json(result))
 }
 
 #[utoipa::path(
@@ -132,7 +134,7 @@ pub async fn update(
         .await?
         .into();
 
-    Ok((StatusCode::OK, Json(result)))
+    Ok(Json(result))
 }
 
 #[utoipa::path(
@@ -159,5 +161,5 @@ pub async fn delete(
         .await
         .map_err(CoreError::Database)?;
 
-    Ok((StatusCode::OK, Json(())))
+    Ok(Json(()))
 }

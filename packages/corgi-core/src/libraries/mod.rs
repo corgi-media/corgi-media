@@ -1,3 +1,5 @@
+pub mod directories;
+
 use corgi_database::{
     entities::library,
     orm::{

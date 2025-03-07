@@ -24,3 +24,4 @@ jsonwebtoken = { workspace = true }
 rand_core = { workspace = true }
 ed25519-dalek = { workspace = true }
 http = { workspace = true }
+walkdir = { workspace = true }

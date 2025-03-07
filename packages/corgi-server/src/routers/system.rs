@@ -8,4 +8,6 @@ pub fn route() -> OpenApiRouter<AppState> {
         .routes(routes!(system::status))
         .routes(routes!(system::ping))
         .routes(routes!(system::info))
+        .routes(routes!(system::fs::directories))
+        .routes(routes!(system::fs::files))
 }

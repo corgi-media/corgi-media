@@ -11,4 +11,12 @@ pub fn route() -> OpenApiRouter<AppState> {
             libraries::update,
             libraries::delete
         ))
+        .routes(routes!(
+            libraries::directories::create,
+            libraries::directories::list
+        ))
+        .routes(routes!(
+            libraries::directories::update,
+            libraries::directories::delete
+        ))
 }

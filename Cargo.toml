@@ -38,3 +38,4 @@ utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
 garde = { version = "0.22.0", features = ["full"] }
 sysinfo = "0.33.1"
 strum = { version = "0.27", features = ["derive"] }
+walkdir = { version = "2.5.0" }

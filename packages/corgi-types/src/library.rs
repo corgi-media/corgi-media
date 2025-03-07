@@ -7,7 +7,7 @@ use strum::{Display, EnumString};
 use utoipa::ToSchema;
 use uuid::Uuid;
 
-use corgi_database::entities::library;
+use corgi_database::entities::{library, library_directory};
 
 use crate::Paginated;
 
@@ -94,4 +94,41 @@ pub struct LibraryPayload {
     #[schema(example = "[\"media.corgi.TMDB\"]")]
     #[garde(skip)]
     pub metadata_providers: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, ToSchema)]
+pub struct LibraryDirectory {
+    #[schema(example = "1")]
+    pub id: i32,
+
+    pub library_id: Uuid,
+
+    #[schema(example = "/path/to/library")]
+    pub path: String,
+
+    pub scanned_at: Option<DateTime<Utc>>,
+
+    pub created_at: DateTime<Utc>,
+
+    pub updated_at: DateTime<Utc>,
+}
+
+impl From<library_directory::Model> for LibraryDirectory {
+    fn from(value: library_directory::Model) -> Self {
+        Self {
+            id: value.id,
+            library_id: value.library_id,
+            path: value.path,
+            scanned_at: value.scanned_at,
+            created_at: value.created_at,
+            updated_at: value.updated_at,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, ToSchema, Validate)]
+pub struct LibraryDirectoryPayload {
+    #[schema(example = "/path/to/library")]
+    #[garde(skip)]
+    pub path: String,
 }

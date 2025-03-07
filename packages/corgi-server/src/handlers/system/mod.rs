@@ -1,3 +1,5 @@
+pub mod fs;
+
 use axum::{extract::State, Json};
 use serde::{Deserialize, Serialize};
 use sysinfo::System;

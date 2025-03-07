@@ -25,6 +25,12 @@ pub enum Error {
 
     #[error("{0} not found")]
     NotFound(&'static str),
+
+    #[error("Invalid path: {0}")]
+    InvalidPath(String),
+
+    #[error("Duplicated library directory: {0}")]
+    DuplicatedLibraryDirectory(String),
 }
 
 impl From<argon2::password_hash::Error> for Error {
@@ -82,6 +88,16 @@ impl IntoHttpError for Error {
             Error::NotFound(_) => HttpError {
                 status_code: StatusCode::NOT_FOUND,
                 kind: "NOT_FOUND",
+                message: self.to_string(),
+            },
+            Error::InvalidPath(_) => HttpError {
+                status_code: StatusCode::BAD_REQUEST,
+                kind: "INVALID_PATH",
+                message: self.to_string(),
+            },
+            Error::DuplicatedLibraryDirectory(_) => HttpError {
+                status_code: StatusCode::CONFLICT,
+                kind: "DUPLICATED_LIBRARY_DIRECTORY",
                 message: self.to_string(),
             },
         }
