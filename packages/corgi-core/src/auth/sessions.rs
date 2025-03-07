@@ -34,7 +34,7 @@ pub async fn auth_password(
     account: String,
     password: String,
 ) -> Result<String, crate::error::Error> {
-    let user = users::find_by_account(db, &account).await?;
+    let user = users::get_by_account(db, &account).await?;
 
     password::verify(&password, &user.password)?;
 

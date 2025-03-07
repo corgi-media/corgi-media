@@ -11,8 +11,8 @@ pub enum Error {
     #[error("{0}")]
     Password(String),
 
-    #[error("The {0} `{1}` is already in use")]
-    UserConflict(&'static str, String),
+    #[error("Duplicated user: {0} `{1}` already exists.")]
+    DuplicatedUser(&'static str, String),
 
     #[error("User not found")]
     UserNotFound,
@@ -70,9 +70,9 @@ impl IntoHttpError for Error {
                 kind: "AUTHENTICATION_FAILED",
                 message: "Wrong user credentials".to_string(),
             },
-            Error::UserConflict(_, _) => HttpError {
+            Error::DuplicatedUser(_, _) => HttpError {
                 status_code: StatusCode::CONFLICT,
-                kind: "USER_CONFLICT",
+                kind: "DUPLICATED_USER",
                 message: self.to_string(),
             },
             Error::JWT(_) => HttpError {

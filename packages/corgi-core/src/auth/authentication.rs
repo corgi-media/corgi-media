@@ -8,7 +8,7 @@ pub trait Authentication {
         db: &DatabaseConnection,
         claims: &Claims,
     ) -> impl std::future::Future<Output = Result<user::Model, Error>> + Send {
-        async { users::find_by_id(db, claims.sub).await }
+        async { users::get_by_id(db, claims.sub).await }
     }
 }
 

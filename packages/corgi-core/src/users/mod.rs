@@ -15,18 +15,15 @@ pub async fn is_table_empty(db: &DatabaseConnection) -> Result<bool, DbErr> {
     Ok(user::Entity::find().limit(1).all(db).await?.is_empty())
 }
 
-pub async fn find_by_id_option(
-    db: &DatabaseConnection,
-    id: Uuid,
-) -> Result<Option<user::Model>, DbErr> {
+pub async fn find_by_id(db: &DatabaseConnection, id: Uuid) -> Result<Option<user::Model>, DbErr> {
     user::Entity::find_by_id(id).one(db).await
 }
 
-pub async fn find_by_id(
+pub async fn get_by_id(
     db: &DatabaseConnection,
     id: Uuid,
 ) -> Result<user::Model, crate::error::Error> {
-    find_by_id_option(db, id)
+    find_by_id(db, id)
         .await?
         .ok_or(crate::error::Error::UserNotFound)
 }
@@ -46,7 +43,7 @@ pub async fn find_by_username_or_email(
         .await
 }
 
-pub async fn find_by_account_option(
+pub async fn find_by_account(
     db: &DatabaseConnection,
     account: &str,
 ) -> Result<Option<user::Model>, DbErr> {
@@ -60,25 +57,28 @@ pub async fn find_by_account_option(
         .await
 }
 
-pub async fn find_by_account(
+pub async fn get_by_account(
     db: &DatabaseConnection,
     account: &str,
 ) -> Result<user::Model, crate::error::Error> {
-    find_by_account_option(db, account)
+    find_by_account(db, account)
         .await?
         .ok_or(crate::error::Error::UserNotFound)
 }
 
-pub async fn check_account_conflict(
+pub async fn check_account_duplication(
     db: &DatabaseConnection,
     username: &str,
     email: &str,
 ) -> Result<(), crate::error::Error> {
     if let Some(existed) = find_by_username_or_email(db, username, email).await? {
         if existed.email == email {
-            return Err(crate::error::Error::UserConflict("email", existed.username));
+            return Err(crate::error::Error::DuplicatedUser(
+                "email",
+                existed.username,
+            ));
         }
-        return Err(crate::error::Error::UserConflict(
+        return Err(crate::error::Error::DuplicatedUser(
             "username",
             existed.username,
         ));
@@ -90,7 +90,7 @@ pub async fn create(
     db: &DatabaseConnection,
     payload: CreateUserPayload,
 ) -> Result<user::Model, crate::error::Error> {
-    check_account_conflict(db, &payload.username, &payload.email).await?;
+    check_account_duplication(db, &payload.username, &payload.email).await?;
 
     let hashed_password = password::hash(payload.password)?;
 
