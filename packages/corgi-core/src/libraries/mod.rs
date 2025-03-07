@@ -1,5 +1,7 @@
 pub mod directories;
 
+use uuid::Uuid;
+
 use corgi_database::{
     entities::library,
     orm::{
@@ -8,20 +10,19 @@ use corgi_database::{
     },
 };
 use corgi_types::{LibraryPayload, Paginated, Pagination};
-use uuid::Uuid;
 
-pub async fn find_by_id_option(
+pub async fn find_by_id(
     db: &DatabaseConnection,
     id: Uuid,
 ) -> Result<Option<library::Model>, DbErr> {
     library::Entity::find_by_id(id).one(db).await
 }
 
-pub async fn find_by_id(
+pub async fn get_by_id(
     db: &DatabaseConnection,
     id: Uuid,
 ) -> Result<library::Model, crate::error::Error> {
-    find_by_id_option(db, id)
+    find_by_id(db, id)
         .await?
         .ok_or(crate::error::Error::NotFound("Library"))
 }
@@ -50,7 +51,7 @@ pub async fn update(
     id: Uuid,
     payload: LibraryPayload,
 ) -> Result<library::Model, crate::error::Error> {
-    let model: library::ActiveModel = find_by_id(db, id).await?.into();
+    let model: library::ActiveModel = get_by_id(db, id).await?.into();
 
     let model = library::ActiveModel {
         id: model.id,

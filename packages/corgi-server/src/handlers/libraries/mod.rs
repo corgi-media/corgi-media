@@ -99,7 +99,7 @@ pub async fn find(
     _: AuthorizedClaims<UserAuthentication>,
     Path(id): Path<Uuid>,
 ) -> ResponseResult<impl IntoResponse> {
-    let result: Library = libraries::find_by_id(state.database_connection(), id)
+    let result: Library = libraries::get_by_id(state.database_connection(), id)
         .await?
         .into();
 

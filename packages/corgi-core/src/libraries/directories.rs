@@ -1,3 +1,5 @@
+use uuid::Uuid;
+
 use corgi_database::{
     entities::library_directory,
     orm::{
@@ -5,7 +7,6 @@ use corgi_database::{
         QueryFilter, Set,
     },
 };
-use uuid::Uuid;
 
 pub async fn find_by_id(
     db: &DatabaseConnection,
@@ -57,7 +58,7 @@ pub async fn create(
 ) -> Result<library_directory::Model, crate::error::Error> {
     let path = crate::filesystem::path::check_dir(&path)?;
 
-    super::find_by_id(db, library_id).await?;
+    super::get_by_id(db, library_id).await?;
 
     let check = find_one_by_library_id_and_path(db, library_id, &path).await?;
 
