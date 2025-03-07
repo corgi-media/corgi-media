@@ -63,7 +63,7 @@ pub async fn create(
     let check = find_one_by_library_id_and_path(db, library_id, &path).await?;
 
     if check.is_some() {
-        return Err(crate::error::Error::DuplicatedLibraryDirectory(path));
+        return Err(crate::error::Error::LibraryDirectoryDuplicated(path));
     }
 
     let model = library_directory::ActiveModel {
@@ -91,7 +91,7 @@ pub async fn update(
 
     if let Some(check) = check {
         if check.id != id {
-            return Err(crate::error::Error::DuplicatedLibraryDirectory(path));
+            return Err(crate::error::Error::LibraryDirectoryDuplicated(path));
         }
     }
 

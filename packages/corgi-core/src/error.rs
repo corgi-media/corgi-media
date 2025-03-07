@@ -11,8 +11,8 @@ pub enum Error {
     #[error("{0}")]
     Password(String),
 
-    #[error("Duplicated user: {0} `{1}` already exists.")]
-    DuplicatedUser(&'static str, String),
+    #[error("User duplicated: {0} `{1}` already exists.")]
+    UserDuplicated(&'static str, String),
 
     #[error("User not found")]
     UserNotFound,
@@ -29,8 +29,8 @@ pub enum Error {
     #[error("Invalid path: {0}")]
     InvalidPath(String),
 
-    #[error("Duplicated library directory: {0}")]
-    DuplicatedLibraryDirectory(String),
+    #[error("Library directory duplicated: {0}")]
+    LibraryDirectoryDuplicated(String),
 }
 
 impl From<argon2::password_hash::Error> for Error {
@@ -70,9 +70,9 @@ impl IntoHttpError for Error {
                 kind: "AUTHENTICATION_FAILED",
                 message: "Wrong user credentials".to_string(),
             },
-            Error::DuplicatedUser(_, _) => HttpError {
+            Error::UserDuplicated(_, _) => HttpError {
                 status_code: StatusCode::CONFLICT,
-                kind: "DUPLICATED_USER",
+                kind: "USER_DUPLICATED",
                 message: self.to_string(),
             },
             Error::JWT(_) => HttpError {
@@ -95,9 +95,9 @@ impl IntoHttpError for Error {
                 kind: "INVALID_PATH",
                 message: self.to_string(),
             },
-            Error::DuplicatedLibraryDirectory(_) => HttpError {
+            Error::LibraryDirectoryDuplicated(_) => HttpError {
                 status_code: StatusCode::CONFLICT,
-                kind: "DUPLICATED_LIBRARY_DIRECTORY",
+                kind: "LIBRARY_DIRECTORY_DUPLICATED",
                 message: self.to_string(),
             },
         }

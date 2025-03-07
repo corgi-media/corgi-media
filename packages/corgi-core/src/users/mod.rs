@@ -73,12 +73,12 @@ pub async fn check_account_duplication(
 ) -> Result<(), crate::error::Error> {
     if let Some(existed) = find_by_username_or_email(db, username, email).await? {
         if existed.email == email {
-            return Err(crate::error::Error::DuplicatedUser(
+            return Err(crate::error::Error::UserDuplicated(
                 "email",
                 existed.username,
             ));
         }
-        return Err(crate::error::Error::DuplicatedUser(
+        return Err(crate::error::Error::UserDuplicated(
             "username",
             existed.username,
         ));
