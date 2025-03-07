@@ -31,6 +31,9 @@ pub enum Error {
 
     #[error("Library directory duplicated: {0}")]
     LibraryDirectoryDuplicated(String),
+
+    #[error("Sign Up is disabled")]
+    SignUpDisabled,
 }
 
 impl From<argon2::password_hash::Error> for Error {
@@ -98,6 +101,11 @@ impl IntoHttpError for Error {
             Error::LibraryDirectoryDuplicated(_) => HttpError {
                 status_code: StatusCode::CONFLICT,
                 kind: "LIBRARY_DIRECTORY_DUPLICATED",
+                message: self.to_string(),
+            },
+            Error::SignUpDisabled => HttpError {
+                status_code: StatusCode::FORBIDDEN,
+                kind: "SIGN_UP_DISABLED",
                 message: self.to_string(),
             },
         }

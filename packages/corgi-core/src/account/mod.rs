@@ -6,10 +6,7 @@ use corgi_database::{
 };
 use corgi_types::{SignUpPayload, UserIdentity};
 
-use crate::{
-    auth::password,
-    users::{self, check_account_duplication},
-};
+use crate::{auth::password, users};
 
 pub async fn create(
     db: &DatabaseConnection,
@@ -18,7 +15,8 @@ pub async fn create(
     let is_empty = users::is_table_empty(db).await?;
 
     if !is_empty {
-        check_account_duplication(db, &payload.username, &payload.email).await?;
+        // check_account_duplication(db, &payload.username, &payload.email).await?;
+        return Err(crate::error::Error::SignUpDisabled);
     }
 
     let identity = if is_empty {
