@@ -33,7 +33,7 @@ pub async fn directories(
     _: AuthorizedClaims<AdminAuthentication>,
     Query(query): Query<PathQuery>,
 ) -> ResponseResult<impl IntoResponse> {
-    let result = filesystem::ls(query.path, true);
+    let result = filesystem::ls(query.path, true).await;
 
     Ok(Json(result))
 }
@@ -56,7 +56,7 @@ pub async fn files(
     _: AuthorizedClaims<AdminAuthentication>,
     Query(query): Query<PathQuery>,
 ) -> ResponseResult<impl IntoResponse> {
-    let result = filesystem::ls(query.path, false);
+    let result = filesystem::ls(query.path, false).await;
 
     Ok(Json(result))
 }
