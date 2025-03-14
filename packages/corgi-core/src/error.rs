@@ -1,15 +1,14 @@
 use http::StatusCode;
 
+use crate::auth::password::PasswordError;
+
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
     Database(#[from] corgi_database::orm::DbErr),
 
-    #[error("{0}")]
-    HashPassword(String),
-
-    #[error("{0}")]
-    Password(String),
+    #[error(transparent)]
+    Password(#[from] PasswordError),
 
     #[error("User duplicated: {0} `{1}` already exists.")]
     UserDuplicated(&'static str, String),
@@ -36,15 +35,6 @@ pub enum Error {
     SignUpDisabled,
 }
 
-impl From<argon2::password_hash::Error> for Error {
-    fn from(value: argon2::password_hash::Error) -> Self {
-        match value {
-            argon2::password_hash::Error::Password => Error::Password(value.to_string()),
-            _ => Error::HashPassword(value.to_string()),
-        }
-    }
-}
-
 pub struct HttpError {
     pub status_code: StatusCode,
     pub kind: &'static str,
@@ -63,12 +53,7 @@ impl IntoHttpError for Error {
                 kind: "DATABASE_ERROR",
                 message: self.to_string(),
             },
-            Error::HashPassword(_) => HttpError {
-                status_code: StatusCode::INTERNAL_SERVER_ERROR,
-                kind: "HASH_PASSWORD_ERROR",
-                message: self.to_string(),
-            },
-            Error::UserNotFound | Error::Password(_) => HttpError {
+            Error::UserNotFound => HttpError {
                 status_code: StatusCode::UNAUTHORIZED,
                 kind: "AUTHENTICATION_FAILED",
                 message: "Wrong user credentials".to_string(),
@@ -78,6 +63,7 @@ impl IntoHttpError for Error {
                 kind: "USER_DUPLICATED",
                 message: self.to_string(),
             },
+            Error::Password(e) => e.into_http_error(),
             Error::JWT(_) => HttpError {
                 status_code: StatusCode::UNAUTHORIZED,
                 kind: "JWT_ERROR",

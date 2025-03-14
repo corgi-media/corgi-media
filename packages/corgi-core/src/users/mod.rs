@@ -92,7 +92,7 @@ pub async fn create(
 ) -> Result<user::Model, crate::error::Error> {
     check_account_duplication(db, &payload.username, &payload.email).await?;
 
-    let hashed_password = password::hash(payload.password)?;
+    let hashed_password = password::hash(payload.password).await?;
 
     let model = user::ActiveModel {
         id: Set(Uuid::now_v7()),

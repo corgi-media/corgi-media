@@ -37,7 +37,7 @@ pub async fn auth_password(
 ) -> Result<Token, crate::error::Error> {
     let user = users::get_by_account(db, &account).await?;
 
-    password::verify(&password, &user.password)?;
+    password::verify(&password, &user.password).await?;
 
     let access_token = create(db, privite_key, &user).await?;
 

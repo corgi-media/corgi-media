@@ -25,7 +25,7 @@ pub async fn create(
         UserIdentity::Normal
     };
 
-    let hashed_password = password::hash(payload.password)?;
+    let hashed_password = password::hash(payload.password).await?;
 
     let new_user = user::ActiveModel {
         id: Set(Uuid::now_v7()),
