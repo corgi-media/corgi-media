@@ -35,7 +35,7 @@ pub struct Library {
     #[schema(example = "CN")]
     pub region: String,
 
-    #[schema(example = "[\"media.corgi.TMDB\"]")]
+    #[schema(example = "[\"media.corgi.metadata.themoviedb\"]")]
     pub metadata_providers: Vec<String>,
 
     pub scanned_at: Option<DateTime<Utc>>,
